@@ -1,0 +1,104 @@
+<div class="my-5">
+    <h1 class="text-center">도서검색</h1>
+    <!--도서 검색하는 -->
+    <div class="row justify-content-end">
+        <form name="frm" class="col-md-4 col-lg-3">
+            <div class="input-group">
+                <input name="query" class="form-control">
+                <button class="btn btn-primary"> 검색! </button>
+            </div>
+        </form>
+    </div>
+    <!--도서출력-->
+    <div id="div_books"></div>
+    <!--페이지이동버튼-->
+    <div class="text-center">
+        <button id="prev" class="btn btn-primary"> 이전! </button>
+        <span id="span_page" class="mx-3"> 1/10 </span>
+        <button id="next" class="btn btn-primary"> 다음! </button>
+    </div>
+</div>
+
+<!--도서 검색 템플릿 : div_books 안에 들어갈 애-->
+<!--documents 갯수만큼 반복해서 테이블 안에 title 을 찍어주는 템플릿-->
+<script id="temp_books" type="x-handlebars-template">
+    <table class="table striped">
+        {{#each documents}}
+        <tr>
+            <td> <img src="{{isImage thumbnail}}" width="50"> </td>
+            <td> {{title}} </td>
+            <td> {{authors}} </td>
+            <td> {{fmtPrice price}} </td>
+        </tr>
+        {{/each}}
+    </table>
+</script>
+
+<script>
+    //썸네일 없는 애들 더미이미지
+    Handlebars.registerHelper("isImage", function(image) {
+        if (image) {
+            return image;
+        } else {
+            return "http://via.placeholder.com/170x230";
+        }
+    });
+    //금액 천단위에 콤마찍기
+    Handlebars.registerHelper("fmtPrice", function(price) {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"
+    });
+</script>
+
+<!--getBooks : 도서 데이터 가져오는 함수-->
+<!--ajax : 서버가 변하지 않으면서 서버와 통신할 수 있음-->
+<!--success : 위에 url이 성공적으로 가져와졌을 때 함수 실행-->
+<!--            성공했을 때 출력이 되어야함-->
+<script>
+    let query = "자바"
+    let page = 1;
+    getBooks();
+
+    //페이지 이동
+    $("#next").on("click", function() {
+        page++;
+        getBooks();
+    });
+    $("#prev").on("click", function() {
+        page--;
+        getBooks();
+    });
+
+    $(frm).on("submit", function(e) {
+        e.preventDefault();
+        query = $(frm.query).val();
+        page = 1; 
+        if (query=="") {
+            alert("검색어를 입력하세용!");
+            $(frm.query).focus();
+        } else {
+            getBooks();
+        }
+    });
+
+    function getBooks(){
+        $.ajax({
+            type:"get",
+            url:"https://dapi.kakao.com/v3/search/book?target=title",
+            headers:{"Authorization":"KakaoAK 8bcfd569eaa7597b6fc03217082ff9a2"},
+            data:{query:query, page:page, size:5},
+            success:function(data) {
+                console.log(data)
+                const temp = Handlebars.compile($("#temp_books").html());
+                $("#div_books").html(temp(data));
+                //페이지이동버튼
+                const last = Math.ceil(data.meta.pageable_count /5);
+                $("#span_page").html(`${page} / ${last}`);
+                //페이지 맨앞맨뒤일때 안눌리게
+                if (page==1) $("#prev").attr("disabled", true);
+                else $("#prev").attr("disabled", false);
+                if (data.meta.is_end) $("#next").attr("disabled", true);
+                else $("#next").attr("disabled", false);
+            }
+        });
+    }
+</script>
