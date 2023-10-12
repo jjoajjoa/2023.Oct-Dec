@@ -1,0 +1,30 @@
+<div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel"> 도서정보 </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-4"> <!--썸네일이미지-->
+                <img src="{{isImage thumbnail}}">
+            </div>
+            <div class="col"> 
+                <h3>{{title}}</h3>
+                <h5>{{authors}}</h5>
+                <hr>
+                <h6>{{fmtPrice price}}</h5>
+                <h6>{{publisher}}</h5>
+                <h6>{{datetime}}</h6>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </div>
+    </div>
+</div>
+</div>
