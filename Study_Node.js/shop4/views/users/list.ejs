@@ -1,0 +1,41 @@
+<div class="my-5">
+    <h1 class="text-center"> 사용자 목록 </h1>
+
+    <div id="div_users"></div>
+
+</div>
+
+<script id="temp_users" type="x-handlebars-template">
+    <table class="table">
+        {{#each .}}
+            <tr>
+                <td>
+                    <a href="/users/mypage?uid={{uid}}">
+                        <img src="{{isImage photo}}" width=50 class="photo"> 
+                    </a>
+                </td>
+                <td class="align-middle"> {{uid}} </td>
+                <td class="align-middle"> {{uname}} </td>
+                <td class="align-middle"> {{phone}} </td>
+            </tr>
+        {{/each}}
+    </table>
+</script>
+
+<script>
+    Handlebars.registerHelper("isImage", function(photo) {
+        if (photo) return "/upload/photo/" + photo;
+        else return "http://via.placeholder.com/120x130";
+    })
+</script>
+
+<script>
+    $.ajax({
+        type:"get",
+        url:"/users/list.json",
+        success:function(data){
+            const temp = Handlebars.compile($("#temp_users").html());
+            $("#div_users").html(temp(data));
+        }
+    });
+</script>

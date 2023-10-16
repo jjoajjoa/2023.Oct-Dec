@@ -1,0 +1,88 @@
+<style>
+    span {
+        width:100px;
+        justify-content: center;
+    }
+</style>
+
+<div class="row justify-content-center my-5">
+    <h1 class="text-center"> 정보 수정~! </h1>
+
+    <form name="frm" class="col-md-6 card p-3" method="post" enctype="multipart/form-data">
+
+        <div class="input-group mb-3">
+            <span class="input-group-text"> 닉네임 </span>
+            <input name="uid" value="<%=user.uid%>" type="hidden">
+            <input name="uname" class="form-control" value="<%=user.uname%>">
+        </div>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text"> 전화번호 </span>
+            <input name="phone" class="form-control" value="<%=user.phone%>">
+        </div>
+
+        <div class="input-group mb-1">
+            <span class="input-group-text"> 주 소 </span>
+            <input name="address1" class="form-control" value="<%=user.address1%>">
+            <button id="search" class="btn btn-primary"> 주소검색 </button>
+        </div>
+
+        <div class="input-group">
+            <input name="address2" class="form-control" placeholder="상세주소를 입력해주세용" value="<%=user.address2%>">
+        </div>
+        
+        <div class="mt-3">
+            <img src="http://via.placeholder.com/120x120" id="photo" width="200">
+            <input name="file" type="file" class="form-control mt-2">
+            <input name="photo" value="<%=user.photo%>" type="hidden"> <!--원래사진-->
+        </div>
+
+        <div class="text-center my-3">
+            <button class="btn btn-primary"> 수정!! </button>
+            <button class="btn btn-secondary" type="reset"> 취소ㅜ </button>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    //정보수정페이지에 업로드한 사진 마이페이지 썸네일에 띄우기
+    const photo = "<%=user.photo%>";
+    if (photo) {
+        $("#photo").attr("src", "/upload/photo/" + photo);
+    } else {
+        $("#photo").attr("src", "http://via.placeholder.com/120x120");
+    }
+
+    //프로필사진 파일이 바뀐 경우 미리보기
+    $(frm.file).on("change", function(e) {
+        $("#photo").attr("src", URL.createObjectURL(e.target.files[0]));
+    });
+
+    //수정버튼 눌려서 섭밋 됐을 때
+    $(frm).on("submit", function(e) {
+        e.preventDefault();
+        const uid = $(frm.uid).val();
+        const uname = $(frm.uname).val();
+        const phone = $(frm.phone).val();
+        const address1 = $(frm.address1).val();
+        const address2 = $(frm.address2).val();
+        if(confirm("변경된 내용을 저장할까용?")) {
+            frm.submit();
+        };
+    });
+
+    //주소검색버튼
+    $("#search").on("click", function() {
+        new daum.Postcode({
+            oncomplete: function(data){
+                console.log(data);
+                if(data.buildingName !== "") {
+                    $(frm.address1).val(data.address + " " + data.buildingName)
+                } else {
+                    $(frm.address1).val(data.address)
+                }
+            }
+        }).open();
+    });
+</script>
