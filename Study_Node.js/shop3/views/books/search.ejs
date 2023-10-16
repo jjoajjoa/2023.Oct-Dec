@@ -174,7 +174,7 @@
         $.ajax({
             type:"get",
             url:"https://dapi.kakao.com/v3/search/book?target=title",
-            headers:{"Authorization":"KakaoAK 8bcfd569eaa7597b6fc03217082ff9a2"},
+            headers:{"Authorization":"KakaoAK API_KEY"},
             data:{query:query, page:page, size:5},
             success:function(data) {
                 console.log(data)
