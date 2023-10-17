@@ -1,0 +1,76 @@
+<style>
+    .bi {
+        color: red;
+        cursor: pointer;
+    }
+</style>
+
+<div class="my-5">
+    <h1 class="text-center mb-5"> 도서정보 </h1>
+    <div class="row">
+        <div class="col-lg-4 mb-3">
+            <img src="<%=book.image%>" width="100%">
+        </div>
+        <div class="col">
+            <h2>
+                [<%=book.bid%>] <%=book.title%> 
+                <span id="like">
+                    <i class="bi bi-arrow-through-heart ms-2"></i>
+                    <i class="bi bi-arrow-through-heart-fill ms-2" style="display: none;"></i>
+                </span>
+            </h2>
+            <hr>
+            <div class="my-3"> [저 자] <%=book.authors%> </div>
+            <div class="my-3"> [가 격] <%=book.fmtprice%>원 </div>
+            <div class="my-3"> [등록일] <%=book.fmtdate%> </div>
+            <div class="my-3"> [출판사] <%=book.publisher%> </div>
+            <div class="my-3"> [ISBN] <%=book.isbn%> </div>
+            <hr>
+            <div class="my-3"> [줄거리] <%=book.contents%> ··· </div>
+            <hr>
+            <button class="btn btn-warning px-5"> 장바구니 </button>
+            <button class="btn btn-success px-5"> 바로구매 </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const bid = "<%=book.bid%>"
+    $("#like").on("click", ".bi-arrow-through-heart", function () {
+        if (!sessionStorage.getItem("uid")) {
+            sessionStorage.setItem("target", "/books/info?bid=" + bid);
+            alert("로그인이 필요합니다.");
+            location.href = "/users/login";
+        } else {
+            // 좋아요 꾸욱!
+            $.ajax({
+                type: "post",
+                url: "/books/like/insert",
+                data: {bid, uid:sessionStorage.getItem("uid")},
+                success:function() {
+                    alert("좋아요 추가!");
+                    check();
+                }
+            });
+        }
+    });
+
+    //좋아요 체크 함수
+    check();
+    function check() {
+        $.ajax({
+            type: "get",
+            url: "/books/like/check",
+            data: {bid, uid:sessionStorage.getItem("uid")},
+            success: function(data) {
+                if (data==0) {
+                    $("#like .bi-arrow-through-heart").show();
+                    $("#like .bi-arrow-through-heart-fill").hide();
+                } else {
+                    $("#like .bi-arrow-through-heart").hide();
+                    $("#like .bi-arrow-through-heart-fill").show();
+                }
+            }
+        });
+    };
+</script>
