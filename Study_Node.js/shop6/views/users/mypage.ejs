@@ -1,0 +1,42 @@
+<div class="row my-5 justify-content-center">
+    <h1 class="text-center"> 마이페이지! </h1>
+
+    <div class="col-md-8 card p-4">
+        <div class="row">
+            <div class="col-3">
+                <img id="photo" src="http://via.placeholder.com/120x120" style="border-radius: 50%;" width="100%">
+            </div>
+            <div class="col-9">
+                <div>
+                    <h3 class="mb-1"><%= user.uid%></h3>
+                    <a href="/users/change" class="btn btn-danger btn-sm ms-10" id="change"> 비밀번호 변경하기 </a>
+                    <h3><%= user.uname%></h3>
+                    <h5><%= user.phone%></h5>
+                    <hr>
+                    <h5><%= user.address1%> <%= user.address2%></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-3" id="update">
+        <a class="btn btn-primary" href="/users/update?uid=<%=user.uid%>"> 정보 수정하기 </a>
+    </div>
+
+</div>
+
+<script>
+    const photo = "<%=user.photo%>";
+    if (photo) {
+        $("#photo").attr("src", "/upload/photo/" + photo);
+    } else {
+        $("#photo").attr("src", "http://via.placeholder.com/120x120");
+    }
+
+    const uid="<%=user.uid%>";
+    if(sessionStorage.getItem("uid") != uid) {
+        $("#update").hide();
+        $("#change").hide();
+    }
+        
+</script>
