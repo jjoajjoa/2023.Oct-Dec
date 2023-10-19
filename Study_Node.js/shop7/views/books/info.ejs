@@ -1,0 +1,124 @@
+<div class="my-5">
+    <h1 class="text-center mb-5"> 도서정보 </h1>
+    <div class="row">
+        <div class="col-lg-4 mb-3">
+            <img src="<%=book.image%>" width="100%">
+        </div>
+        <div class="col">
+            <h2>
+                [<%=book.bid%>] <%=book.title%>
+                <i id="like" class="bi bi-arrow-through-heart ms-2 like">
+                    <span id="count" class="count"> 0 </span>
+                </i>
+            </h2>
+            <hr>
+            <div class="my-3"> [저 자] <%=book.authors%> </div>
+            <div class="my-3"> [가 격] <%=book.fmtprice%>원 </div>
+            <div class="my-3"> [등록일] <%=book.fmtdate%> </div>
+            <div class="my-3"> [출판사] <%=book.publisher%> </div>
+            <div class="my-3"> [ISBN] <%=book.isbn%> </div>
+            <hr>
+            <button id="btn-cart" class="btn btn-warning px-5"> 장바구니 </button>
+            <button class="btn btn-success px-5"> 바로구매 </button>
+            <hr>
+        </div>
+    </div>
+    <ul class="nav nav-tabs my-3" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" 
+                id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" 
+                type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true"> 줄거리
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" 
+                id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" 
+                type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false"> 사용자 리뷰
+            </button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+            <%=book.contents%> ···
+        </div>
+        <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+            <%-include("review.ejs")%>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#profile-tab").click();
+    getCheck();
+
+    //장바구니클릭
+    $("#btn-cart").on("click", function() {
+        if(!sessionStorage.getItem("uid")){
+            sessionStorage.setItem("target", "/books/info?bid=<%=book.bid%>");
+            location.href="/users/login";
+        } else {
+            $.ajax({
+                type: "post",
+                url: "/cart/insert",
+                data: {uid:sessionStorage.getItem("uid"), bid:"<%=book.bid%>"},
+                success: function(data) {
+                    //if(confirm("장바구니로 이동할까용")) location.href="/cart/list";
+                    if(data==0) {
+                        alert("장바구니 등록완");
+                    } else {
+                        alert("장바구니에 이미 있움");
+                    }
+                }
+            });
+        };
+    });
+
+    //빈하트 클릭 추가
+    $("h2").on("click", ".bi-arrow-through-heart", function() {
+        if(!sessionStorage.getItem("uid")) {
+            sessionStorage.setItem("target", "/books/info?bid=<%=book.bid%>");
+            location.href="/users/login";
+        } else {
+            $.ajax({
+                type: "post",
+                url: "/books/like/insert",
+                data: {uid:sessionStorage.getItem("uid"), bid:"<%=book.bid%>"},
+                success: function() {
+                    alert("조아요홍홍")
+                    getCheck();
+                }
+            });
+        }
+    });
+ 
+    //찬하트 클릭 삭제
+    $("h2").on("click", ".bi-arrow-through-heart-fill", function() {
+        $.ajax({
+            type: "get",
+            url: "/books/like/delete",
+            data: {uid:sessionStorage.getItem("uid"), bid:"<%=book.bid%>"},
+            success: function() {
+                alert("안조아요흑흑");
+                getCheck();
+            }
+        });
+    });    
+
+    function getCheck() {
+        $.ajax({
+            type: "get",
+            url: "/books/like/check",
+            data: {uid:sessionStorage.getItem("uid"), bid:"<%=book.bid%>"},
+            success: function(data){
+                $("#count").html(data.fcnt);
+                if(data.ucnt==1) {
+                    $("#like").removeClass("bi-arrow-through-heart");
+                    $("#like").addClass("bi-arrow-through-heart-fill");
+                } else {
+                    $("#like").removeClass("bi-arrow-through-heart-fill");
+                    $("#like").addClass("bi-arrow-through-heart");
+                }
+            }
+        })
+    }
+</script>
