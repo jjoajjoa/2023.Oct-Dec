@@ -1,0 +1,175 @@
+<div class="my-5">
+    <h1 class="text-center mb-5"> 장바구니 </h1>
+    <div id="div_cart"></div>
+    <div class="text-end mt-3">
+        <button id="btn-order" class="btn btn-primary me-3"> 주문하기 </button>
+    </div>
+</div>
+
+<script id="temp_cart" type="x-handlebars-template">
+    <div class="row">
+        <div class="col ms-2">
+            <input id="all" type="checkbox">
+            <span class="ms-3"> 전체선택 </span>
+        </div>
+        <div class="col text-end">
+            <button class="btn-delete btn btn-danger btn-sm"> 선택삭제 </button>
+        </div>
+    </div>
+    
+    <table class="table">
+        <tr>
+            <th colspan=3></th>
+            <th>상품정보</th>
+            <th>가 격</th>
+            <th>수 량</th>
+            <th>합 계</th>
+        </tr>
+        {{#each .}}
+            <tr class="align-middle">
+                <td><input cid="{{cid}}" class="chk" type="checkbox"></td>
+                <td>{{cid}}: {{bid}}</td>
+                <td><img src="{{image}}" width="50px"></td>
+                <td>{{title}}</td>
+                <td>{{fmtprice}}원</td>
+                <td>
+                    <input class="qnt" value="{{qnt}}" size="3" oninput="isNumber(this)">
+                    <button cid="{{cid}}" class="btn-update btn btn-secondary btm-sm">변경</button>
+                </td>
+                <td>총 {{fmtsum}}원</td>
+                <td><i class="bi bi-trash" cid="{{cid}}" style="cursor:pointer"></td>
+                <td></td>
+            </tr>
+        {{/each}}
+        <tr>
+            <td colspan="8" class="text-end">
+                총 상품 금액: <span id="sum"> 0 </span> 원
+            </td>
+        </tr>
+    </table>
+</script>
+
+<script>
+    Handlebars.registerHelper("sum", function(price, qnt) {
+        const sum = price * qnt;
+        return sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    })
+</script>
+
+<script>
+    getCart();
+    
+    //주문하기 버튼 클릭했을 때
+    $("#btn-order").on("click", function() {
+        const cnt = $("#div_cart .chk:checked").length;
+        if (cnt==0) {
+            alert("주문할 상품을 선택하세용");
+        } else {
+            let cart = [];
+            $("#div_cart .chk:checked").each(function() {
+                const cid = $(this).attr("cid");
+                cart.push(cid);
+            });
+            location.href = "/order/insert?cart=" + cart.join(); 
+            // .join 배열에 들어간애들 스트링으로 짤라서 컴마까지 붙여줌
+            
+        }
+    });
+
+    //선택삭제를 클릭했을 때
+    $("#div_cart").on("click", ".btn-delete", function() {
+        const chk = $("#div_cart .chk:checked").length;
+        if(chk==0) {
+            alert("삭제할 상품이 없어요!!!");
+            return;
+        }
+        $("#div_cart .chk:checked").each(function() {
+            const cid = $(this).attr("cid");
+            $.ajax({
+                type: "post",
+                url: "/cart/delete",
+                data:{cid},
+                success:function(){}
+            });
+            getCart();
+        });
+    });
+
+    //전체선택  all 클릭했을 때
+    $("#div_cart").on("click", "#all", function() {
+        if($(this).is(":checked")) {
+            $("#div_cart .chk").prop("checked", true);
+        } else {
+            $("#div_cart .chk").prop("checked", false);
+        }
+    });
+
+    //각 행의 chk를 클릭했을 때
+    $("#div_cart").on("click", ".chk", function() {
+        const all = $("#div_cart .chk").length;
+        const chk = $("#div_cart .chk:checked").length;
+        if(all==chk) {
+            $("#div_cart #all").prop("checked", true);
+        } else {
+            $("#div_cart #all").prop("checked", false);
+        }
+    });
+
+    //변경버튼 눌렸을 때
+    $("#div_cart").on("click", ".btn-update", function() {
+        const cid = $(this).attr("cid");
+        const qnt = $(this).parent().find(".qnt").val();
+        if (qnt=="") { //수량 변경 입력 안하면 1 이야
+            $(this).parent().find(".qnt").val(1);
+            return;
+        }
+        if(confirm(`수량을 ${qnt}권으로 변경하시겟슴가?`)) {
+            $.ajax({
+                type: "post",
+                url: "/cart/update",
+                data: {cid, qnt},
+                success: function() {
+                    getCart();
+                }
+            })
+        }
+    });
+
+    //숫자만입력가능
+    function isNumber(item){
+        item.value=item.value.replace(/[^0-9]/g,'');
+    }
+
+    $("#div_cart").on("click", ".bi-trash", function() {
+        const cid = $(this).attr("cid");
+        if(confirm(`${cid}번 책을 삭제할거예요?`)) {
+            $.ajax({
+                type: "post",
+                url: "/cart/delete",
+                data: {cid},
+                success: function(){
+                    getCart();
+                }
+            });
+        };
+    });
+
+    function getCart(){
+        $.ajax({
+            type:"get",
+            url:"/cart/list.json",
+            data:{uid:sessionStorage.getItem("uid")},
+            success:function(data){
+                console.log(data);
+                const temp = Handlebars.compile($("#temp_cart").html());
+                $("#div_cart").html(temp(data));
+
+                let sum = 0;
+                data.forEach(item => {
+                    sum += item.sum;
+                });
+                $("#sum").html(sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            }
+        });
+    };
+</script>
