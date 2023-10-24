@@ -11,9 +11,18 @@ const Posts = () => {
         .then(json => {
             const start = (page-1)*10 +1;
             const end = page*10;
-            const pageJson = json.filter(j => j.id>=start && j.id<=end)
-            setPosts(pageJson)
+
+            let newJson = json.filter(j => j.id>=start && j.id<=end)
+            newJson = (newJson.map(j=> j&&{...j, show:false}))
+            console.log(newJson)
+            setPosts(newJson)
+            
         })
+    }
+
+    const onClickTitle = (id) => {
+        const newPosts = posts.map(p => p.id===id ? {...p, show:!p.show} : p);
+        setPosts(newPosts);
     }
 
     useEffect(() => {
@@ -31,16 +40,20 @@ const Posts = () => {
                 </thead>
                 <tbody>
                     {posts.map(post => 
-                        <tr>
-                            <td> {post.id} </td> <td> {post.title} </td>
+                        <tr key={post.id}>
+                            <td> {post.id} </td>
+                            <td>
+                                <div onClick={() => onClickTitle(post.id)} style={{color:"red", cursor:"pointer"}}> {post.title} </div>
+                                {post.show && <div>{post.body}</div>}
+                            </td>
                         </tr>
                     )}
                 </tbody>
             </Table>
             <div className='text-center my-5'>
-                <Button onClick={()=> setPage(page-1)} disabled={page===1}> 이전 </Button>
+                <Button variant="outline-warning" onClick={()=> setPage(page-1)} disabled={page===1}> 이전 </Button>
                 <span className='mx-3'> {page} / 10 </span>
-                <Button onClick={()=> setPage(page+1)} disabled={page===10}> 다음 </Button>
+                <Button variant="outline-warning" onClick={()=> setPage(page+1)} disabled={page===10}> 다음 </Button>
             </div>
         </div>
     )
