@@ -1,10 +1,10 @@
 import './App.css';
-import Posts from './components/ex01/Posts';
+import RouterPage from './components/ex03/RouterPage';
 
 const App = () => {
     return (
         <div className="App">
-            <Posts />
+            <RouterPage />
         </div>
     );
 }
