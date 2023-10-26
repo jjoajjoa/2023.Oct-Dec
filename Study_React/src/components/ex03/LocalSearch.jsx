@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Table, Spinner, Button, Form, Row, Col, InputGroup } from 'react-bootstrap'
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import LocalModal from './LocalModal';
 
 const LocalSearch = () => {
     const [locals, setLocals] = useState([]);
@@ -63,7 +64,7 @@ const LocalSearch = () => {
                     <Table>
                         <thead>
                             <tr>
-                                <td>지역명</td> <td>주소</td> <td>전화번호</td>
+                                <td>지역명</td> <td>주소</td> <td>전화번호</td> <td>위치보기</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -72,6 +73,7 @@ const LocalSearch = () => {
                                     <td>{local.place_name}</td>
                                     <td>{local.address_name}</td>
                                     <td>{local.phone}</td>
+                                    <td><LocalModal local={local} /></td>
                                 </tr>
                             )}
                         </tbody>
