@@ -7,14 +7,10 @@ router.get('/list.json', function(req, res) { //localhost:5000/books/list.json?q
     const query = req.query.query;
     const page = parseInt(req.query.page);
     const size = parseInt(req.query.size);
-
     const sql = 'call books(?,?,?)';
     db.get().query(sql, [query, page, size], function(err, rows) {
-        if(err) {
-            console.log('도서목록오류.................', err);
-        } else {
-            res.send({list:rows[0], total:rows[1][0].total});
-        }
+        if(err) { console.log('도서목록오류.................', err); }
+        else { res.send({list:rows[0], total:rows[1][0].total}); }
     });
 });
 
@@ -45,11 +41,8 @@ router.post("/delete", function(req, res) {
     const bid = req.body.bid;
     const sql = 'delete from books where bid=?';
     db.get().query(sql, [bid], function(err, rows) {
-        if(err) {
-            res.send("0");
-        } else {
-            res.send("1");
-        };
+        if(err) { res.send("0"); } 
+        else { res.send("1"); };
     });
 });
 
