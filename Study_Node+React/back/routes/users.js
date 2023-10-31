@@ -1,7 +1,36 @@
 var express = require('express');
 var router = express.Router();
-
 var db = require("../db");
+
+var multer = require('multer');
+
+//프로필사진 업로드하기
+var upload = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, done) => {
+            done(null, "./public/upload/photo")
+        },
+        filename: (req, file, done) => {
+            var fileName = Date.now() + '.jpg';
+            done(null, fileName);
+        }
+    })
+});
+
+//프사 업로드 라우터
+router.post("/update/photo", upload.single("file"), function (req, res) {
+    const filename = '/upload/photo/' + req.file.filename;
+    const uid = req.body.uid;
+    const sql = 'update users set photo=? where uid=?'
+    db.get().query(sql, [filename, uid], function (err, rows) {
+        if (err) {
+            res.send("0");
+        } else {
+            res.send("1");
+        };
+    });
+});
+
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -28,24 +57,24 @@ router.post("/login", function (req, res) {
 });
 
 //사용자 정보 읽기
-router.get("/read/:uid", function(req, res) { //localhost:5000/users/read/red
+router.get("/read/:uid", function (req, res) { //localhost:5000/users/read/red
     const uid = req.params.uid;
     const sql = 'select *, date_format(regdate, "%Y년%m월%d일 %T") fmtdate, date_format(modidate, "%Y년%m월%d일 %T") fmtmodi from users where uid=?';
-    db.get().query(sql, [uid], function(err, rows) {
+    db.get().query(sql, [uid], function (err, rows) {
         res.send(rows[0])
     });
 });
 
 //사용자 정보 수정
-router.post("/update", function(req, res) {
+router.post("/update", function (req, res) {
     const uname = req.body.uname;
     const phone = req.body.phone;
     const address1 = req.body.address1;
     const address2 = req.body.address2;
     const uid = req.body.uid;
     const sql = 'update users set uname=?, phone=?, address1=?, address2=?, modidate=now() where uid=?';
-    db.get().query(sql, [uname, phone, address1, address2, uid], function(err, rows) {
-        if(err) {
+    db.get().query(sql, [uname, phone, address1, address2, uid], function (err, rows) {
+        if (err) {
             res.send("0");
         } else {
             res.send("1");
