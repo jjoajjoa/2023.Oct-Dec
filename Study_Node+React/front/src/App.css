@@ -59,3 +59,8 @@ a {
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
 }
+
+.heart {
+    color: red;
+    cursor: pointer;
+}
