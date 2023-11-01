@@ -79,8 +79,9 @@ router.post("/delete", function (req, res) {
 //도서정보
 router.get("/read/:bid", function (req, res) { //localhost:5000/books/read/66
     const bid = req.params.bid;
-    const sql = 'call book_read(?)';
-    db.get().query(sql, [bid], function (err, rows) {
+    const uid = req.query.uid ? req.query.uid : "";
+    const sql = 'call book_read(?,?)';
+    db.get().query(sql, [bid, uid], function (err, rows) {
         res.send(rows[0][0])
     });
 });
@@ -95,6 +96,34 @@ router.post("/update", function (req, res) {
     const contents = req.body.contents;
     const sql = 'update books set title=?, authors=?, price=?, publisher=?, contents=?, regdate=now() where bid=?';
     db.get().query(sql, [title, authors, price, publisher, contents, bid], function (err, rows) {
+        if (err) {
+            res.send("0");
+        } else {
+            res.send("1");
+        };
+    });
+});
+
+//좋아요추가
+router.post("/insert/favorite", function (req, res) {
+    const uid = req.body.uid;
+    const bid = req.body.bid;
+    const sql = 'insert into favorite(uid, bid) values(?, ?)';
+    db.get().query(sql, [uid, bid], function (err, rows) {
+        if (err) {
+            res.send("0");
+        } else {
+            res.send("1");
+        };
+    });
+});
+
+//좋아요삭제
+router.post("/delete/favorite", function (req, res) {
+    const uid = req.body.uid;
+    const bid = req.body.bid;
+    const sql = 'delete from favorite where uid=? and bid=?';
+    db.get().query(sql, [uid, bid], function (err, rows) {
         if (err) {
             res.send("0");
         } else {
