@@ -5,7 +5,7 @@ import { BsBalloonHeartFill, BsBalloonHeart } from 'react-icons/bs';
 import { BsChatRightDots } from 'react-icons/bs';
 import Pagination from "react-js-pagination";
 import './Pagination.css';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, NavLink } from 'react-router-dom';
 
 const HomePage = () => {
     const [books, setBooks] = useState([]);
@@ -40,6 +40,23 @@ const HomePage = () => {
         navi(`${path}?query=${query}&page=${page}`)
     }
 
+    const onClickHeart = async (bid, e) => {
+        e.preventDefault();
+        if (sessionStorage.getItem("uid")) {
+            await axios.post("/books/insert/favorite",
+                { uid: sessionStorage.getItem("uid"), bid: bid });
+            getBooks();
+        } else {
+            navi("/users/login");
+        };
+    };
+
+    const onClickFillHeart = async (bid) => {
+        await axios.post("/books/delete/favorite",
+            { uid: sessionStorage.getItem("uid"), bid: bid });
+        getBooks();
+    };
+
     if (loading) return <div className='text-center my-5'><Spinner variant='danger' /></div>
     return (
         <div className='my-5'>
@@ -47,7 +64,7 @@ const HomePage = () => {
                 <Col>
                     <Form onSubmit={onSubmit}>
                         <InputGroup>
-                            <Form.Control onChange={(e)=>setQurery(e.target.value)}
+                            <Form.Control onChange={(e) => setQurery(e.target.value)}
                                 value={query} placeholder='제목, 저자, 내용' />
                             <Button> 검색~ </Button>
                         </InputGroup>
@@ -57,17 +74,24 @@ const HomePage = () => {
             </Row>
             <Row>
                 {books.map(book =>
-                    <Col xm={6} md={4} lg={2} className='my-2'>
+                    <Col xm={6} md={4} lg={2} className='my-2' key={book.bid}>
                         <Card>
                             <Card.Body>
-                                <img src={book.image || "http://via.placeholder.com/170x250"} width="90%" />
+                                <NavLink to={`/books/info/${book.bid}`}>
+                                    <img src={book.image || "http://via.placeholder.com/170x250"} width="90%" />
+                                </NavLink>
                                 <div className='ellipsis'>{book.title}</div>
                             </Card.Body>
                             <Card.Footer>
                                 <small className='heart'>
-                                    {book.ucnt === 0 ? <BsBalloonHeart /> : <BsBalloonHeartFill />}
+                                    {book.ucnt === 0 ?
+                                        <BsBalloonHeart onClick={(e) => onClickHeart(book.bid, e)} />
+                                        :
+                                        <BsBalloonHeartFill onClick={() => onClickFillHeart(book.bid)} />
+                                    }
                                     <span className='ms-1'>{book.fcnt}</span>
                                 </small>
+
                                 {book.rcnt === 0 ||
                                     <span className='ms-3'>
                                         <BsChatRightDots />

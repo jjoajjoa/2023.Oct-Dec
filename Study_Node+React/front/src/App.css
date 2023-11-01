@@ -28,10 +28,6 @@
     justify-content: center;
 }
 
-.active {
-    color: white;
-    background-color: tomato;
-}
 
 a {
     text-decoration: none !important;

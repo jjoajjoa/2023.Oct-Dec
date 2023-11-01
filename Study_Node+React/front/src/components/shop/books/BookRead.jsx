@@ -20,9 +20,13 @@ const BookRead = () => {
         isbn: "",
         regdate: "",
         fmtdate: "",
-        file: null //진짜파일
+        file: null, //진짜파일
+        fcnt: 0,
+        ucnt: 0,
+        rcnt: 0
     })
-    const { file, title, authors, price, fmtprice, contents, publisher, image, isbn, regdate, fmtdate } = book; //비구조할당
+    const { file, title, authors, price, fmtprice, contents, publisher, image, isbn, regdate, fmtdate,
+        fcnt, ucnt, rcnt} = book; //비구조할당
 
     const getBook = async () => {
         setLoading(true);
@@ -84,6 +88,10 @@ const BookRead = () => {
                                 <div>[ISBN] {isbn}</div>
                                 <div>[가　격] {fmtprice}원</div>
                                 <div>[등록일] {fmtdate}</div>
+                                <hr/>
+                                <div> [ucnt] {ucnt} </div>
+                                <div> [fcnt, 총좋아수] {fcnt} </div>
+                                <div> [rcnt, 총댓글수] {rcnt} </div>
                             </Col>
                         </Row>
                         <Row>

@@ -20,23 +20,27 @@ const LoginPage = () => {
         });
     };
 
-    const onSubmit = async(e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
-        if (uid==="") {
+        if (uid === "") {
             alert("아이디를 입력하세요!");
             ref_uid.current.focus();
-        } else if (upass===""){
+        } else if (upass === "") {
             alert("비밀번호를 입력하세요!!");
         } else {
             const res = await axios.post("/users/login", form);
-            if(res.data==0) {
-                alert("존재하지 않는 아이디가 아니야!");
+            if (res.data == 0) {
+                alert("존재하지 않는 아이디가 아니에용!");
                 ref_uid.current.focus();
-            } else if (res.data==2) {
-                alert("비밀번호가 일치하지 않잖아!!");
+            } else if (res.data == 2) {
+                alert("비밀번호가 일치하지 않아용!!");
             } else {
                 sessionStorage.setItem("uid", uid);
-                navi("/");
+                if (sessionStorage.getItem("target")) {
+                    navi(sessionStorage.getItem("target"));
+                } else {
+                    navi("/");
+                }
             }
         }
     };
