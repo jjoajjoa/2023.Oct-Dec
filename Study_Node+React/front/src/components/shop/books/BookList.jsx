@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Spinner, Table, Row, Col, InputGroup, Form, Button } from 'react-bootstrap';
 import Pagination from "react-js-pagination";
 import '../Pagination.css';
+import { BoxContext } from '../BoxContext';
 
 const BookList = () => {
+    
+    const {box, setBox} = useContext(BoxContext);
+
     const size = 10;
     const location = useLocation();
     const navi = useNavigate();
@@ -70,9 +74,25 @@ const BookList = () => {
 
     const onClickDelete = async () => {
         if (chcnt === 0) {
-            alert("삭제할 도서를 선택하세요!");
+            //alert("삭제할 도서를 선택하세요!");
+            setBox({ show: true, message: "삭제할 도서를 선택하세용!!!" });
         } else {
             let count = 0;
+            setBox({
+                show: true,
+                message: `${chcnt}권의 도서를 삭제하시겠슴까?`,
+                action: async () => {
+                    for (const book of books) {
+                        if (book.checked) {
+                            const res = await axios.post("/books/delete", { bid: book.bid });
+                            if (res.data === 1) count++;
+                        };
+                    };
+                    setBox({ show: true, message: `${count}권 삭제완료~~` })
+                    navi(`${path}?page=1&query=${query}&size=${size}`);
+                }
+            })
+/*
             if (window.confirm(`${chcnt}권의 도서를 삭제하시겠슴까?`)) {
                 for (const book of books) {
                     if (book.checked) {
@@ -83,6 +103,7 @@ const BookList = () => {
                 alert(`${count}권 삭제되었슴다`);
                 navi(`${path}?page=1&query=${query}&size=${size}`);
             };
+*/
         };
     };
 
@@ -145,6 +166,7 @@ const BookList = () => {
                     nextPageText={"›"}
                     onChange={onChangePage} />
             }
+
         </div>
     )
 }

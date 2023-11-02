@@ -1,9 +1,13 @@
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useContext } from 'react'
 import { Spinner, Row, Col, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { BoxContext } from '../BoxContext'
 
 const MyPage = () => {
+
+    const { box, setBox } = useContext(BoxContext);
+
     const ref_file = useRef(null);
     const navi = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -37,8 +41,14 @@ const MyPage = () => {
     };
 
     const onUpdatePhoto = async () => {
-        if (!file) alert("수정할 사진을 선택하세요!!");
-        else {
+        if (!file) {
+            //alert("수정할 사진을 선택하세요!!");
+            setBox({
+                show: true,
+                message: "수정할 사진을 선택하세용!"
+            })
+        } else {
+            /*
             if (window.confirm("변경한 사진을 저장할까용?")) {
                 const formData = new FormData();
                 formData.append("file", file);
@@ -46,6 +56,17 @@ const MyPage = () => {
                 await axios.post("/users/update/photo", formData);
                 alert("사진 변경 완룡!!");
             }
+            */
+            setBox({
+                show: true,
+                message: "변경된 사진을 저장하실거예여?",
+                action: async () => {
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    formData.append("uid", uid);
+                    await axios.post("/users/update/photo", formData);
+                }
+            })
         }
     }
 
@@ -59,7 +80,7 @@ const MyPage = () => {
                 <Col className='text-center'>
                     <img onClick={() => ref_file.current.click()}
                         src={photo || "http://via.placeholder.com/200x200"} width="200" className='photo' />
-                    <input type='file' ref={ref_file} onChange={onChangeFile} style={{display:"none"}} />
+                    <input type='file' ref={ref_file} onChange={onChangeFile} style={{ display: "none" }} />
                     <Button onClick={onUpdatePhoto} size='sm mt-2'> 이미지 수정 </Button>
                 </Col>
                 <Col md={6}>
@@ -71,6 +92,7 @@ const MyPage = () => {
                     <Button size='sm mt-2' onClick={() => navi("/users/update")}> 정보 수정 </Button>
                 </Col>
             </Row>
+
         </div>
     )
 }

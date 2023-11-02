@@ -1,22 +1,21 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Row, Col, Spinner, Card, Button, Tab, Tabs } from 'react-bootstrap';
 import { BsBalloonHeartFill, BsBalloonHeart, BsChatRightDots } from 'react-icons/bs';
 import ReviewPage from './ReviewPage';
+import { BoxContext } from '../BoxContext';
 
 const BookInfo = () => {
-
+    const { setBox } = useContext(BoxContext)
     const { bid } = useParams(); //비구조할당
     const [book, setBook] = useState("");
     const [loading, setLoading] = useState(false);
-
     const navi = useNavigate();
     const location = useLocation();
-
     const getBook = async () => {
         setLoading(true);
-        const res =await axios(`/books/read/${bid}?uid=${sessionStorage.getItem("uid")}`);
+        const res = await axios(`/books/read/${bid}?uid=${sessionStorage.getItem("uid")}`);
         console.log(res.data);
         setBook(res.data);
         setLoading(false);
@@ -37,17 +36,30 @@ const BookInfo = () => {
         getBook();
     }
 
+    const onClickCart = async () => {
+        const res = await axios.post("/cart/insert", { bid, uid: sessionStorage.getItem("uid") });
+        setBox({
+            show: true,
+            message: res.data === 0 ?
+                    `장바구니에 등록되었어욤\n쇼핑을 계속 하시겠슴까??` 
+                    : 
+                    `이미 장바구니에 있어욤\n장바구니로 이동하시겠슴까?`,
+            action: () => {
+                location.href = "/";
+            }
+        });
+    };
 
     useEffect(() => { getBook(); }, [])
 
-    if(loading) return <div className='text-center my-5'><Spinner variant='warning'/></div>
+    if (loading) return <div className='text-center my-5'><Spinner variant='warning' /></div>
     return (
         <div className='my-5'>
             <h1 className='text-center mb-5'> 도서 정보</h1>
             <Card className='p-3'>
                 <Card.Body>
                     <Row>
-                        <Col xs lg={3} className='align-self-center'><img src={book.image} width="90%"/></Col>
+                        <Col xs lg={3} className='align-self-center'><img src={book.image} width="90%" /></Col>
                         <Col>
                             <div>
                                 <span className='heart'>
@@ -61,7 +73,7 @@ const BookInfo = () => {
                                 </span>
                                 <h1>{book.title}</h1>
                             </div>
-                            <hr/>
+                            <hr />
                             <h4>[저자] {book.authors}</h4>
                             <h4>[가격] {book.fmtprice}원</h4>
                             <h4>[출판사] {book.publisher}</h4>
@@ -70,12 +82,16 @@ const BookInfo = () => {
                         </Col>
                     </Row>
                 </Card.Body>
-                <Card.Footer>
-                    <div className='text-center p-2'>
-                        <Button className='mx-3' variant='warning'>장바구니</Button>
-                        <Button variant='success'>바로구매</Button>
-                    </div>
-                </Card.Footer>
+                {sessionStorage.getItem("uid") && 
+                    <Card.Footer>
+                        <div className='text-center p-2'>
+                            <Button onClick={onClickCart}
+                                className='mx-3' variant='warning'>장바구니</Button>
+                            <Button variant='success'>바로구매</Button>
+                        </div>
+                    </Card.Footer>
+                }
+
             </Card>
 
             <div className='my-5'>

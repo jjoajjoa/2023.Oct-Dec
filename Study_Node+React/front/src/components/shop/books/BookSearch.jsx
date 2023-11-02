@@ -1,20 +1,22 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Table, Button, Form, Col, Row, Spinner, InputGroup } from 'react-bootstrap'
+import { BoxContext } from '../BoxContext';
 
 const BookSearch = () => {
-    const location = useLocation();
-    const path = location.pathname;
-    const navi = useNavigate();
-    const search = new URLSearchParams(location.search);
-    const page = search.get("page") ? parseInt(search.get("page")) : 1;
-    const [query, setQuery] = useState(search.get("query") ? search.get("query") : "리액트");
-    const [loading, setLoading] = useState(false);
     const [books, setBooks] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [total, setTotal] = useState(0);
     const [end, setEnd] = useState(false);
     const [chcnt, setChcnt] = useState(0);
+    const { box, setBox } = useContext(BoxContext);
+    const location = useLocation();
+    const path = location.pathname;
+    const search = new URLSearchParams(location.search);
+    const page = search.get("page") ? parseInt(search.get("page")) : 1;
+    const [query, setQuery] = useState(search.get("query") ? search.get("query") : "리액트");
+    const navi = useNavigate();
 
     const getBooks = async () => {
         const url = `https://dapi.kakao.com/v3/search/book?target=title&query=${query}&size=5&page=${page}`;
@@ -23,7 +25,6 @@ const BookSearch = () => {
         }
         setLoading(true);
         const res = await axios(url, config);
-        //console.log(res.data);
         let docs = res.data.documents;
         docs = docs.map(doc => doc && { ...doc, checked: false });
         setBooks(docs);
@@ -43,22 +44,27 @@ const BookSearch = () => {
     const onSearch = (e) => {
         e.preventDefault();
         if (query === "") {
-            alert("검색어를 입력하세요!");
+            //alert("검색어를 입력하세요!");
+            setBox({ show: true, message: '검색어를 입력하세용' });
         } else {
             navi(`${path}?query=${query}&page=1`);
         }
     }
 
     const onInsert = async (book) => {
-        if (window.confirm("저장하실거예여?")) {
-            const url = "/books/insert" //백엔드에서 준 라우터 주소
-            const res = await axios.post(url, { ...book, authors: book.authors.join() });
-            if (res.data == 0) {
-                alert("저장완룡!");
-            } else {
-                alert("이미 저장되어 있어용!");
+        setBox({
+            show: true,
+            message: "저장하실거예용?",
+            action: async () => {
+                const url = "/books/insert" //백엔드에서 준 라우터 주소
+                const res = await axios.post(url, { ...book, authors: book.authors.join() });
+                if (res.data == 0) {
+                    setBox({ show: true, message: "저장완료!" })
+                } else {
+                    setBox({ show: true, message: "이미 저장된 책이에용" })
+                }
             }
-        }
+        })
     }
 
     const onChangeAll = (e) => {

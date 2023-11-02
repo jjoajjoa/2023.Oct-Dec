@@ -1,16 +1,28 @@
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
+import { useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom'
+import { Container, Nav, Navbar } from 'react-bootstrap';
+import { BoxContext } from '../shop/BoxContext'
 
 const HeaderPage = () => {
+    const { box, setBox } = useContext(BoxContext);
+
     const navi = useNavigate();
     const onLogout = (e) => {
         e.preventDefault();
+        /*
         if(window.confirm("로그아웃 할겁니까?")) {
             sessionStorage.clear();
             navi("/");
         }
+        */
+        setBox({
+            show: true,
+            message: "로그아웃 하실검믹가?",
+            action: () => {
+                sessionStorage.clear();
+                navi("/");
+            }
+        })
     };
 
     return (
@@ -26,6 +38,9 @@ const HeaderPage = () => {
                         <NavLink className="me-3" to="/">Home</NavLink>
                         <NavLink className="me-3" to="/books/search">도서검색</NavLink>
                         <NavLink className="me-3" to="/books/list">도서목록</NavLink>
+                        {sessionStorage.getItem("uid") &&
+                            <NavLink className="me-3" to="/orders/cart">장바구니</NavLink>
+                        }
                     </Nav>
                     <Nav>
                         {!sessionStorage.getItem("uid") ?
