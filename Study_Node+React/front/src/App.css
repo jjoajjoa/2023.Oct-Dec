@@ -60,3 +60,10 @@ a {
     color: red;
     cursor: pointer;
 }
+
+
+.delete {
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: gray;
+}
