@@ -33,13 +33,22 @@ const HeaderPage = () => {
                 <Navbar.Collapse id="navbarScroll">
                     <Nav
                         className="me-auto my-2 my-lg-0"
-                        style={{ maxHeight: '100px' }}
+                        style={{ maxHeight: '100%' }}
                         navbarScroll>
                         <NavLink className="me-3" to="/">Home</NavLink>
-                        <NavLink className="me-3" to="/books/search">도서검색</NavLink>
-                        <NavLink className="me-3" to="/books/list">도서목록</NavLink>
-                        {sessionStorage.getItem("uid") &&
-                            <NavLink className="me-3" to="/orders/cart">장바구니</NavLink>
+                        {sessionStorage.getItem("uid") === "admin" &&
+                            <>
+                                <NavLink className="me-3" to="/books/search">도서검색</NavLink>
+                                <NavLink className="me-3" to="/books/list">도서목록</NavLink>
+                                <NavLink className="me-3" to="/orders/admin">주문관리</NavLink>
+                            </>
+                        }
+
+                        {(sessionStorage.getItem("uid") && sessionStorage.getItem("uid") !== 'admin') &&
+                            <>
+                                <NavLink className="me-3" to="/orders/cart">장바구니</NavLink>
+                                <NavLink className="me-3" to="/orders/list">주문목록</NavLink>
+                            </>
                         }
                     </Nav>
                     <Nav>
