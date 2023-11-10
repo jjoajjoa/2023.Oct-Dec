@@ -1,0 +1,57 @@
+<div class="my-5">
+	<h1 class="text-center mb-5"> 게시글 정보 </h1>
+	<div class="text-end my-3">
+		<button id="btn-update" class="btn btn-warning btn-sm">수정</button>
+		<button id="btn-delete" class="btn btn-secondary btn-sm">삭제</button>
+	</div>
+	<div id="div_post"></div>
+</div>
+
+<script id="temp_posts" type="x-handlebars-template">
+	<div class="card">
+		<div class="card-body">
+			<h5>[{{pid}}] {{title}}</h5>
+			<p>{{body}}</p>
+		</div>
+		<div class="card-footer">
+			<span>[작성자] {{writer}}　</span>
+			<span>[작성일] {{fmtdate}}</span>
+		</div>
+	</div>
+</script>
+
+<script>
+	const pid = "[[${pid}]]"
+	getPost();
+	
+ 	$("#btn-update").on("click", function() {
+      location.href = "/posts/update?pid=" + pid;
+    });
+
+	$("#btn-delete").on("click", function () {
+		if (confirm(`${pid}번 글 삭제하시겠슴까?`)) {
+			$.ajax({
+				type: "post",
+				url: "/posts/delete",
+				data: pid,
+				contentType: "application/json",
+				success: function () {
+					alert("삭제완료!");
+					location.href = "/posts/list";
+				}
+			})
+		}
+	})
+
+	function getPost() {
+		$.ajax({
+			type: "get",
+			url: "/posts/read.json",
+			data: {pid},
+			success: function (data) {
+				const temp = Handlebars.compile($("#temp_posts").html());
+				$("#div_post").html(temp(data));
+			}
+		})
+	}
+</script>

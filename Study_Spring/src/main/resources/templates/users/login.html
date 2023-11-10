@@ -1,0 +1,57 @@
+<div class="my-5">
+	<h1 class="text-center mb-3">로그인</h1>
+	<div class="row justify-content-center">
+		<div class="col-md-6">
+			<form name="frm" class="card p-2">
+				<div class="input-group mb-2">
+					<span class="input-group-text w-25 justify-content-center">아이디</span>
+					<input name="uid" class="form-control">
+				</div>
+				<div class="input-group mb-2">
+					<span class="input-group-text w-25 justify-content-center">비밀번호</span>
+					<input name="upass" class="form-control" type="password">
+				</div>
+				<button class="btn btn-warning w-100">로그인~!</button>
+				<div class="text-end mt-3">
+               		<a href="/users/insert">회원가입</a>
+            	</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(frm).on("submit", function (e) {
+		e.preventDefault();
+		const uid = $(frm.uid).val();
+		const upass = $(frm.upass).val();
+
+		if (uid == "") {
+			alert("아이디를 입력하세요!");
+			$(frm.uid).focus();
+			return;
+		}
+		if (upass == "") {
+			alert("비밀번호를 입력하세요!");
+			$(frm.upass).focus();
+			return;
+		}
+
+		$.ajax({
+			type: "post",
+			url: "/users/login",
+			data: JSON.stringify({uid, upass}),
+			contentType: "application/json",
+			success: function (data) {
+				if(data==2){
+					alert("비밀번호가 일치하지 않네욤")
+				} else if(data==0) {
+					alert("없는 아이디예용")
+				} else {
+					sessionStorage.setItem("uid", uid);
+					location.href="/";
+				}
+			}
+		});
+	});
+</script>

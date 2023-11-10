@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.MysqlMapper">
+   <select id="list" resultType="hashmap">
+      select p.*, date_format(p.regdate,'%Y-%m-%d %T') fmtdate, uname
+      from posts p, users u
+      where writer = uid
+      order by pid desc;
+   </select>
+   <select id="read" resultType="hashmap">
+   	  select p.*, date_format(p.regdate,'%Y-%m-%d %T') fmtdate, uname
+      from posts p, users u
+      where writer = uid and pid = #{pid};
+   </select>
+   <insert id="insert">
+      insert into posts(title, body, writer)
+      values(#{title}, #{body},#{writer});
+   </insert>
+   <delete id="delete">
+      delete from posts
+      where pid = #{pid};
+   </delete>
+   <update id="update">
+	  update posts
+	  set title=#{title}, body=#{body}, regdate=now()
+	  where pid = #{pid};
+   </update>
+</mapper>

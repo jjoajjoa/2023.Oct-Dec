@@ -1,0 +1,78 @@
+<div class="my-5">
+	<h1 class="text-center mb-5">MyPage</h1>
+	<div id="div_mypage" class="row justify-content-center mx-5"></div>
+</div>
+
+<script id="temp_mypage" type="x-handlebars-template">
+	<div class="col-md-6">
+		<div class="mb-3">
+			<img class="photo" id="photo" src="{{checkImage photo}}" width="200">
+			<input type="file" id="file" style="display:none">
+			<button id="btn-photo" class="btn btn-warning btn-sm">저장</button>
+		</div>
+		<div>
+			<div>
+				{{uname}}
+				<a href="/users/password" class="btn btn-danger btn-sm ms-3">비밀번호 변경</a>
+			</div>
+			<div>{{phone}}</div>
+			<div>{{address1}} {{address2}}</div>
+			<div class="mt-3">
+				<a href="/users/update" class="btn btn-warning btn-sm">정보수정</a>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script>
+	Handlebars.registerHelper("checkImage", function(image) {
+		if(image) return "/display?file=" + image;
+		else return "http://via.placeholder.com/50x50";
+	})
+</script>
+
+<script>
+	getMypage();
+	
+	$("#div_mypage").on("click", "#btn-photo", function() {
+		const file = $("#file").val();
+		if(file=="") {
+			alert("변경할 사진을 골라주세욧!");
+		} else {
+			if(confirm("해당 사진으로 바꿀까용?")) {
+				const formData = new FormData();
+				formData.append("file", $("#file")[0].files[0]);
+				formData.append("uid", sessionStorage.getItem("uid"));
+				$.ajax({
+					type: "post",
+					url: "/users/photo",
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function() {
+						alert("변경 완료~!");
+					}
+				})
+			}
+		}
+	})
+	
+	$("#div_mypage").on("change", "#file", function(e) {
+		$("#div_mypage #photo").attr("src", URL.createObjectURL(e.target.files[0]));
+	})
+	$("#div_mypage").on("click", "#photo", function() {
+		$("#div_mypage #file").click();
+	})
+	
+	function getMypage() {
+		$.ajax({
+			type: "get",
+			url: "/users/read",
+			data: {uid:sessionStorage.getItem("uid")},
+			success: function(data) {
+				const temp = Handlebars.compile($("#temp_mypage").html());
+				$("#div_mypage").html(temp(data));
+			}
+		})
+	}
+</script>

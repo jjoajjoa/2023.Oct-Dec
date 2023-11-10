@@ -1,0 +1,38 @@
+<div class="my-5">
+	<h1 class="text-center mb-5"> 게시판 </h1>
+	<div class="text-end mb-5">
+		<a href="/posts/insert" class="btn btn-warning">글쓰기</a>
+	</div>
+	<div id="div_posts"></div>
+</div>
+
+<script id="temp_posts" type="x-handlebars-template">
+	<table class="table">
+		{{#each .}}
+			<tr>
+				<td>
+					<a href="/posts/read?pid={{pid}}">
+						<div class="ellipsis">{{title}}</div>
+					</a>
+				</td>
+				<td>[{{uname}}] {{writer}} </td>
+				<td>{{fmtdate}}</td>
+			</tr>
+		{{/each}}
+	</table>
+</script>
+
+<script>
+	getPosts();
+	function getPosts() {
+		$.ajax({
+			type: "get",
+			url: "/posts/list.json",
+			success: function (data) {
+				//console.log(data);
+				const temp = Handlebars.compile($("#temp_posts").html());
+				$("#div_posts").html(temp(data));
+			}
+		})
+	}
+</script>

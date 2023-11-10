@@ -1,0 +1,54 @@
+<div class="my-5">
+	<h1 class="text-center mb-5"> 글 수정 </h1>
+	<div id="div_post"></div>
+</div>
+
+<script id="temp_posts" type="x-handlebars-template">
+	<form name="frm">
+		<input name="title" class="form-control mb-2" value="{{title}}">
+		<textarea name="body" rows="10" class="form-control" placeholder="내용을 입력하세용">{{body}}</textarea>
+		<div class="text-center my-5">
+			<button id="btn-update" class="btn btn-warning btn-sm">수정</button>
+			<button class="btn btn-secondary btn-sm" type="reset">취소</button>
+		</div>
+	</form>
+</script>
+
+<script>
+	const pid = "[[${pid}]]"
+	getPost();
+
+	$("#div_post").on("click", "#btn-update", function(e) {
+		const title = $(frm.title).val();
+		const body = $(frm.body).val();
+		if (title == "") {
+			alert("제목 입력하세용!");
+			$(frm.title).focus();
+			return;
+		}
+		if (confirm("글을 수정하시겠슴까?")) {
+			const data = {title, body, pid};
+			$.ajax({
+				type: "post",
+				url: "update",
+				data: JSON.stringify(data),//String 타입으로 변경
+				contentType: "application/json",
+				success: function () {
+					location.href = "/posts/list";
+				}
+			});
+		}
+	})
+	
+	function getPost() {
+		$.ajax({
+			type: "get",
+			url: "/posts/read.json",
+			data: {pid},
+			success: function (data) {
+				const temp = Handlebars.compile($("#temp_posts").html());
+				$("#div_post").html(temp(data));
+			}
+		})
+	}
+</script>
