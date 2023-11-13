@@ -14,7 +14,7 @@
 		e.preventDefault();
 		const title = $(frm.title).val();
 		const body = $(frm.body).val();
-		const writer = "black";
+		const writer = sessionStorage.getItem("uid");
 		if (title == "") {
 			alert("제목 입력하세용!");
 			$(frm.title).focus();

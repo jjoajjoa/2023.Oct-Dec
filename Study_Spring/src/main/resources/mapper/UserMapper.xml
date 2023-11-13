@@ -12,20 +12,20 @@
     <update id="update">
     	update users
     	set uname=#{uname}, phone=#{phone}, address1=#{address1}, address2=#{address2}
-    	where uid=#{uid}
+    	where uid = #{uid};
     </update>
-    <update id="update_photo">
-       update users
-       set photo=#{photo}
-       where uid=#{uid}
+    <update id="photo">
+    	update users
+    	set photo = #{photo}
+    	where uid = #{uid};
     </update>
-    <update id="update_password">
-    	update users 
+    <update id="password">
+    	update users
     	set upass=#{upass}
-    	where uid=#{uid}
+    	where uid = #{uid};
     </update>
     <insert id="insert">
-    	insert into users(uid, upass, uname, phone, address1, address2)
-    	values(#{uid}, #{upass}, #{uname}, #{phone}, #{address1}, #{address2})
+       insert into users(uid, upass, uname, phone, address1, address2)
+       values(#{uid}, #{upass}, #{uname}, #{phone}, #{address1}, #{address2});
     </insert>
 </mapper>

@@ -15,7 +15,7 @@ public class UserController {
 		model.addAttribute("pageName", "users/login.html");
 		return "home";
 	}
-	
+
 	@GetMapping("/mypage")
 	public String mypage(Model model) {
 		model.addAttribute("pageName", "users/mypage.html");
@@ -37,6 +37,6 @@ public class UserController {
 	@GetMapping("/insert")
 	public String insert(Model model) {
 		model.addAttribute("pageName", "users/insert.html");
-		return "home.html";
+		return "home";
 	}
 }

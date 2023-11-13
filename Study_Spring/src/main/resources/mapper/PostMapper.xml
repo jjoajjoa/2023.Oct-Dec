@@ -7,6 +7,35 @@
       where writer = uid
       order by pid desc;
    </select>
+   <select id="list1" resultType="hashmap">
+     	select p.*, u.uname, date_format(p.regdate, '%Y-%m-%d %T') fmtdate
+		from posts p, users u
+		where p.writer=u.uid 
+		<if test = "key=='title'">
+			and title like concat('%', #{query}, '%')
+		</if>
+		<if test = "key=='body'">
+			and body like concat('%', #{query}, '%')
+		</if>
+		<if test = "key=='writer'">
+			and writer like concat('%', #{query}, '%') 
+		</if>
+		order by pid desc
+		limit #{start}, #{size};
+   </select>
+   <select id="total" resultType="int">
+    	select count(*)
+    	from posts
+    	<if test = "key=='title'">
+			where title like concat('%', #{query}, '%')
+		</if>
+		<if test = "key=='body'">
+			where body like concat('%', #{query}, '%')
+		</if>
+		<if test = "key=='writer'">
+			where writer like concat('%', #{query}, '%') 
+		</if>
+    </select>
    <select id="read" resultType="hashmap">
    	  select p.*, date_format(p.regdate,'%Y-%m-%d %T') fmtdate, uname
       from posts p, users u

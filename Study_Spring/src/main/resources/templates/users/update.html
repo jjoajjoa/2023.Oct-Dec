@@ -1,78 +1,70 @@
 <div class="my-5">
-	<h1 class="text-center mb-5">정보수정</h1>
-	<div id="div_mypage" class="row justify-content-center mx-5"></div>
+	<h1 class="text-center mb-5">정보 수정하기</h1>
+	<div id="div_user" class="row justify-content-center"></div>
 </div>
 
-<script id="temp_mypage" type="x-handlebars-template">
-	<div class="col">
-		<div class="card p-3">
-			<form name="frm">
-				<div class="input-group mb-2">
-					<span class="input-group-text">이름</span>
-					<input name="uname" class="form-control" value="{{uname}}">
-				</div>
-				<div class="input-group mb-2">
-					<span class="input-group-text">번호</span>
-					<input name="phone" class="form-control" value="{{phone}}">
-				</div>
-				<div class="input-group mb-2">
-					<span class="input-group-text">주소</span>
-					<input name="address1" class="form-control" value="{{address1}}">
-					<button id="btn-search" class="btn btn-warning" type="button">검색!</button>
-				</div>
-				<div><input name="address2" class="form-control" value="{{address2}}"></div>
-				<div class="text-center mt-3">
-					<button id="btn-update" class="btn btn-warning" type="button">수정</button>
-					<button class="btn btn-secondary" type="reset">취소</button>
-				</div>
-			</form>
-		</div>
+<script id="temp_user" type="x-handlebars-template">
+	<div class="col-md-8">
+		<form name="frm" class="card p-3">
+			<div class="input-group mb-2">
+				<span class="input-group-text">이름</span>
+				<input name="uname" class="form-control" value="{{uname}}">
+			</div>
+			<div class="input-group mb-2">
+				<span class="input-group-text">번호</span>
+				<input name="phone" class="form-control" value="{{phone}}">
+			</div>
+			<div class="input-group mb-2">
+				<span class="input-group-text">주소</span>
+				<input name="address1" class="form-control" value="{{address1}}" readonly>
+				<button id="btn-search" class="btn btn-warning" type="button">검색!</button>
+			</div>
+			<input name="address2" class="form-control" placeholder="상세주소" value="{{address2}}">
+			<div class="text-center mt-3">
+				<button id="btn-update" class="btn btn-warning" type="button">수정</button>
+				<button class="btn btn-secondary" type="reset">취소</button>
+			</div>
+		</form>
 	</div>
 </script>
 
 <script>
-	getMypage();
-	
-	$("#div_mypage").on("click", "#btn-search", function () {
-		new daum.Postcode({
-			oncomplete: function(data) {
-				//console.log(data);
-				const address = data.address;
-				const building = data.buildingName ? data.buildingName : "";
-				$(frm.address1).val(`${address}(${building})`);
-			}
-		}).open();
-	})
-
-	$("#div_mypage").on("click", "#btn-update", function () {
+	$("#div_user").on("click", "#btn-update", function (e) {
 		const uname = $(frm.uname).val();
 		const phone = $(frm.phone).val();
 		const address1 = $(frm.address1).val();
 		const address2 = $(frm.address2).val();
-		//alert(`${uname}\n${phone}\n${address1}\n${address2}\n`);
-		if (confirm("수정 내용을 저장하시겠슴까?")) {
+		//alert(`${uname}\n${phone}\n${address1}\n${address2}\n`)
+		if (confirm("수정 저장 하시겠슴까?")) {
 			$.ajax({
 				type: "post",
 				url: "/users/update",
-				data: JSON.stringify({uname, phone, address1, address2, uid: sessionStorage.getItem("uid")}),
-				contentType: "application/json",
+				data: JSON.stringify({uid: sessionStorage.getItem("uid"), uname, phone, address1, address2}),
+				contentType: "application/JSON",
 				success: function () {
-					alert("수정 성공");
-					location.href = "/users/mypage";
+					alert("수정 완료!!");
+					location.href = "/users/mypage"
 				}
 			})
 		}
 	})
 
-	function getMypage() {
-		$.ajax({
-			type: "get",
-			url: "/users/read",
-			data: {uid: sessionStorage.getItem("uid")},
-			success: function (data) {
-				const temp = Handlebars.compile($("#temp_mypage").html());
-				$("#div_mypage").html(temp(data));
+	$("#div_user").on("click", "#btn-search", function () {
+		new daum.Postcode({
+			oncomplete: function (data) {
+				const address = data.address;
+				const building = data.buildingName ? `(${data.buildingName})` : "";
+				$(frm.address1).val(address + building);
 			}
-		})
-	}
+		}).open();
+	})
+
+	$.ajax({
+		type: "get",
+		url: "/users/read?uid=" + sessionStorage.getItem("uid"),
+		success: function (data) {
+			const temp = Handlebars.compile($("#temp_user").html());
+			$("#div_user").html(temp(data));
+		}
+	})
 </script>

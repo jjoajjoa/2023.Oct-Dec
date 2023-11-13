@@ -21,13 +21,7 @@ public class UserRestController {
 	@Autowired
 	UserDAO dao;
 	
-	@PostMapping("/update")
-	public void update(@RequestBody UserVO vo) {
-		//System.out.println(vo.toString());
-		dao.update(vo);
-	}
-
-	@GetMapping("/read") //localhost:8080/users/read?uid=
+	@GetMapping("/read") //localhost:8080/users/read?uid=blue
 	public HashMap<String, Object> read(String uid) {
 		return dao.read(uid);
 	}
@@ -38,35 +32,36 @@ public class UserRestController {
 
 		UserVO user = dao.login(vo.getUid());
 		if (user != null) {
-			if (vo.getUpass().equals(user.getUpass())) {
-				result = 1;
-			} else {
-				result = 2;
-			}
+			if (vo.getUpass().equals(user.getUpass())) { result = 1; } 
+			else { result = 2; }
 		}
 		return result;
 	}
 	
-	@PostMapping("/photo")
-	public void photo(String uid, MultipartHttpServletRequest multi) throws Exception {
+	@PostMapping("update")
+	public void update(@RequestBody UserVO vo) {
+		dao.update(vo);
+	}
+	
+	@PostMapping("/upload")
+	public void upload(String uid, MultipartHttpServletRequest multi) throws Exception {
 		MultipartFile file = multi.getFile("file");
 		String filePath = "/upload/photo/";
 		String fileName = System.currentTimeMillis() + ".jpg";
 		file.transferTo(new File("c:" + filePath + fileName));
 		UserVO vo = new UserVO();
 		vo.setUid(uid);
-		vo.setPhoto(filePath + fileName);
-		dao.updatePhoto(vo);
+		vo.setPhoto(filePath+fileName);
+		dao.photo(vo);
 	}
 	
 	@PostMapping("/password")
 	public void password(@RequestBody UserVO vo) {
-		dao.updatePassword(vo);
+		dao.password(vo);
 	}
-
+	
 	@PostMapping("/insert")
 	public void insert(@RequestBody UserVO vo) {
-		System.out.println(vo.toString());
 		dao.insert(vo);
 	}
 }
