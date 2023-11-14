@@ -12,12 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.dao.PostDAO;
 import com.example.domain.PostVO;
+import com.example.service.PostService;
 
 @RestController
 @RequestMapping("/posts")
 public class PostRestController {
 	@Autowired
 	PostDAO dao;
+	
+	@Autowired
+	PostService service;
 
 	@GetMapping("/list.json")
 	public List<HashMap<String, Object>> list() {
@@ -26,7 +30,7 @@ public class PostRestController {
 
 	@GetMapping("/read.json")
 	public HashMap<String, Object> read(int pid) {
-		return dao.read(pid);
+		return service.read(pid);
 	}
 
 	@PostMapping("/insert")

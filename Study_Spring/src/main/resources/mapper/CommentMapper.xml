@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.CommentMapper">
+	<select id="list" resultType="hashmap">
+		select *
+		from view_comments
+		where pid=#{pid}
+		order by cid desc
+		limit #{start}, #{size};
+	</select>
+	<select id="total" resultType="int">
+		select count(*) 
+		from comments
+		where pid=#{pid};
+	</select>
+	<insert id="insert">
+		insert into comments(pid, body, writer)
+		values(#{pid}, #{body}, #{writer});
+	</insert>
+	<delete id="delete">
+		delete from comments
+		where cid=#{cid};
+	</delete>
+	<update id="update">
+		update comments
+		set body=#{body}, regdate = now()
+		where cid=#{cid};
+	</update>
+	
+	<select id="read" resultType="com.example.domain.CommentVO">
+		select * from comments
+		where cid=#{cid};
+	</select>
+</mapper>
