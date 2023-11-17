@@ -1,6 +1,6 @@
 <div class="my-5">
-	<h1 class="text-center mb-5"> 게시판 </h1>
-	<div class="row mb-5">
+	<h1 class="text-center mb-5">게시글</h1>
+	<div class="mb-3 row">
 		<div class="col-5">
 			<form name="frm">
 				<div class="input-group">
@@ -9,97 +9,100 @@
 						<option value="body">내용</option>
 						<option value="writer">작성자</option>
 					</select>
-					<input name="query" class="form-control" placeholder="검색어">
-					<button class="btn btn-warning">검색!</button>
-					<span id="total" class="mt-2 ms-2"></span>
+					<input name="query" class="ms-2 form-control" placeholder="검색어">
+					<button class="btn btn-primary">검색</button>
+					<span id="total" class="mt-2 ms-3"></span>
 				</div>
 			</form>
 		</div>
 		<div class="col text-end">
-			<a href="/posts/insert" class="btn btn-warning">글쓰기</a>
+			<a href="/posts/insert" class="btn btn-primary px-5">글쓰기</a>
 		</div>
 	</div>
 	<div id="div_posts"></div>
 	<div id="pagination" class="pagination justify-content-center mt-5"></div>
 </div>
-
 <script id="temp_posts" type="x-handlebars-template">
-	<table class="table">
-		{{#each .}}
-			<tr>
-				<td>
-					<a href="/posts/read?pid={{pid}}">
-						<div class="ellipsis">{{title}}</div>
-					</a>
-				</td>
-				<td>[{{uname}}] {{writer}} </td>
-				<td>{{fmtdate}}</td>
-				<td>{{viewcnt}}</td>
-				<td>{{commcnt}}</td>
-			</tr>
-		{{/each}}
+	<table class="table table-striped">
+	{{#each .}}
+		<tr>
+			<td>
+				<div class="ellipsis">
+					[{{pid}}]<a href="/posts/read?pid={{pid}}">{{title}}</a>
+				</div>
+			</td>
+			<td>{{uname}} ({{writer}})</td>
+			<td>{{fmtdate}}</td>
+			<td>{{viewcnt}}</td>
+			<td>{{commcnt}}</td>
+		</tr>	
+	{{/each}}
 	</table>
 </script>
 
 <script>
-	let page = 1;
-	let size = 5;
-	getTotal();
+	let page=1;
+	let size=10;
 
-	$(frm).on("submit", function (e) {
+	getTotal();	
+	
+	$(frm).on("submit", function(e){
 		e.preventDefault();
-		page = 1;
+		page=1;
 		getTotal();
-	})
-
-	function getTotal() {
-		const key = $(frm.key).val();
-		const query = $(frm.query).val();
+	});
+	
+	function getTotal(){
+		const key=$(frm.key).val();
+		const query=$(frm.query).val();
 		$.ajax({
-			type: "get",
-			url: "/posts/total",
+			type:"get",
+			url:"/posts/total",
 			data: {key, query},
-			success: function (data) {
-				if (data == 0) {
-					alert("검색내용이 없어용!")
+			success:function(data){
+				if(data==0) {
+					alert("검색내용이 없습니다!");
 					$(frm.query).val("");
 					frm.submit();
-				} else {
-					$("#total").html(`총 ${data}건`)
-					const totalPages = Math.ceil(data / size);
-					$("#pagination").twbsPagination("changeTotalPages", totalPages, page)
-				}
+				}else{
+					$("#total").html(`검색수:${data}건`);
+					if(data > size && data){
+						const totalPages = Math.ceil(data/size);
+                		$("#pagination").twbsPagination("changeTotalPages", totalPages, page);
+                	}
+                }
 			}
 		})
 	}
-	function getPosts() {
-		const key = $(frm.key).val();
-		const query = $(frm.query).val();
+	
+	function getPosts(){
+		const key=$(frm.key).val();
+		const query=$(frm.query).val();
 		//alert(key + ":" + query);
 		$.ajax({
-			type: "get",
-			url: "/posts/list1.json",
+			type:"get",
+			url:"/posts/list1.json",
 			data: {page, size, key, query},
-			success: function (data) {
+			success:function(data){
 				//console.log(data);
-				const temp = Handlebars.compile($("#temp_posts").html());
+				const temp=Handlebars.compile($("#temp_posts").html());
 				$("#div_posts").html(temp(data));
 			}
 		})
 	}
-
+	
 	$('#pagination').twbsPagination({
-		totalPages: 10, //총 페이지 번호 수
-		visiblePages: 5, // 하단에서 한 번에 보여 지는 페이지 번호 수
-		startPage: 1, // 시작 시 표시되는 현재 페이지
-		initiateStartPageClick: false, // 플러그인이 시작 시 페이지 버튼 클릭 여부 (default : true) 
-		first: '<<', // 페이지네이션 버튼 중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
-		prev: '<', // 이전 페이지 버튼에 쓰여 있는 텍스트
-		next: '>', // 다음 페이지 버튼에 쓰여 있는 텍스트
-		last: '>>', // 페이지네이션 버튼 중 마지막으로 가는 버튼에 쓰여 있는 텍스트
-		onPageClick: function (event, clickPage) {
-			page = clickPage;
-			getPosts();
-		}
-	});
+        totalPages:10, //총 페이지 번호 수
+        visiblePages: 5, // 하단에서 한 번에 보여 지는 페이지 번호 수
+        startPage : 1, // 시작 시 표시되는 현재 페이지
+        initiateStartPageClick: false, // 플러그인이 시작 시 페이지 버튼 클릭 여부 (default : true) 
+        first : '<<', // 페이지네이션 버튼 중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
+        prev : '<', // 이전 페이지 버튼에 쓰여 있는 텍스트
+        next : '>', // 다음 페이지 버튼에 쓰여 있는 텍스트
+        last : '>>', // 페이지네이션 버튼 중 마지막으로 가는 버튼에 쓰여 있는 텍스트
+        onPageClick: function (event, clickPage) {
+            page=clickPage;
+            getPosts(); 
+        }
+    });
 </script>

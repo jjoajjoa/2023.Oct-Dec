@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.EnrollMapper">
+	<delete id="delete">
+		delete from enrollments
+		where lcode=#{lcode} and scode=#{scode}
+	</delete>
+	<update id="persons">
+		update courses
+		set persons = persons + #{count}
+		where lcode=#{lcode}
+	</update>
+	<insert id="insert">
+		insert into enrollments(scode, lcode, edate)
+		values(#{scode}, #{lcode}, now())
+	</insert>
+</mapper>

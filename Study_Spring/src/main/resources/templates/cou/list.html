@@ -1,0 +1,86 @@
+<div class="my-5">
+	<h1 class="text-center mb-5">강좌목록</h1>
+	<div class="row">
+		<div class="col-md-6">
+			<form name="frm" class="input-group">
+				<select name="key" class="form-select">
+					<option value="lname">강좌이름</option>
+					<option value="lcode">강좌코드</option>
+					<option value="room">강의실</option>
+					<option value="pname">담당교수</option>
+				</select>
+				<input name="query" class="form-control ms-2" placeholder="검색어">
+				<button class="btn btn-primary">검색</button>
+				<span id="total" class="mt-2 ms-3"></span>
+			</form>
+		</div>
+	</div>
+	<hr>
+	<div id="div_cou"></div>
+	<div id="pagination" class="pagination justify-content-center mt-5"></div>
+</div>
+<script id="temp_cou" type="x-handlebars-template">
+   <table class="table">
+      {{#each list}}
+      <tr>
+         <td>{{lcode}}</td>
+         <td><a href="/cou/read?lcode={{lcode}}">{{lname}}</a><td>
+         <td>{{hours}}({{room}})</td>
+         <td>{{pname}}({{instructor}})</td>
+         <td class="text-end">{{persons}}/{{capacity}}</td>
+      </tr>   
+      {{/each}}
+   </table>   
+</script>
+<script>
+	let page = 1;
+	const size = 3;
+	let total = 0;
+	getList();
+
+	$(frm).on("submit", function (e) {
+		e.preventDefault();
+		getList();
+	});
+
+	function getList() {
+		const query = $(frm.query).val();
+		const key = $(frm.key).val();
+		$.ajax({
+			type: "get",
+			url: "/cou/list.json",
+			data: {page, size, key, query},
+			success: function (data) {
+				$("#total").html(`검색수: ${data.total}건`);
+				if (data.total == 0) {
+					$("#div_cou").html("<h3 class='text-center my-5'>검색결과가 없습니다!</h3>");
+				} else {
+					const temp = Handlebars.compile($("#temp_cou").html());
+					$("#div_cou").html(temp(data));
+					if (total != data.total) {
+						const totalPages = Math.ceil(data.total / size);
+						$("#pagination").twbsPagination("changeTotalPages", totalPages, 1);
+						total = data.total;
+					}
+				}
+				if (data.total > size) $("#pagination").show();
+				else $("#pagination").hide()
+			}
+		})
+	}
+
+	$('#pagination').twbsPagination({
+		totalPages: 10, //총 페이지 번호 수
+		visiblePages: 5, // 하단에서 한 번에 보여 지는 페이지 번호 수
+		startPage: 1, // 시작 시 표시되는 현재 페이지
+		initiateStartPageClick: false, // 플러그인이 시작 시 페이지 버튼 클릭 여부 (default : true) 
+		first: '<<', // 페이지네이션 버튼 중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
+		prev: '<', // 이전 페이지 버튼에 쓰여 있는 텍스트
+		next: '>', // 다음 페이지 버튼에 쓰여 있는 텍스트
+		last: '>>', // 페이지네이션 버튼 중 마지막으로 가는 버튼에 쓰여 있는 텍스트
+		onPageClick: function (event, clickPage) {
+			page = clickPage;
+			getList();
+		}
+	});
+</script>

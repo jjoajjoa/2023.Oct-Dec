@@ -9,13 +9,13 @@ import com.example.dao.PostDAO;
 import com.example.domain.CommentVO;
 
 @Service
-public class CommentServiceImpl implements CommentService {
+public class CommentServiceImpl implements CommentService{
 	@Autowired
 	CommentDAO cdao;
-
+	
 	@Autowired
 	PostDAO pdao;
-
+	
 	@Transactional
 	@Override
 	public void insert(CommentVO vo) {
@@ -26,7 +26,7 @@ public class CommentServiceImpl implements CommentService {
 	@Transactional
 	@Override
 	public void delete(int cid) {
-		CommentVO vo = cdao.read(cid);
+		CommentVO vo=cdao.read(cid);
 		cdao.delete(cid);
 		pdao.commcnt(vo.getPid(), -1);
 	}

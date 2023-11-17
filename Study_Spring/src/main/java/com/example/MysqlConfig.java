@@ -46,6 +46,6 @@ public class MysqlConfig {
     
     @Bean
     public DataSourceTransactionManager txManager(DataSource dataSource) {
-       return new DataSourceTransactionManager(dataSource); 
+    	return new DataSourceTransactionManager(dataSource); 
     }
 }

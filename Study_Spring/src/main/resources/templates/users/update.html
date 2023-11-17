@@ -1,70 +1,72 @@
 <div class="my-5">
-	<h1 class="text-center mb-5">정보 수정하기</h1>
+	<h1 class="text-center mb-5">정보수정</h1>
 	<div id="div_user" class="row justify-content-center"></div>
 </div>
-
 <script id="temp_user" type="x-handlebars-template">
 	<div class="col-md-8">
 		<form name="frm" class="card p-3">
 			<div class="input-group mb-2">
 				<span class="input-group-text">이름</span>
 				<input name="uname" class="form-control" value="{{uname}}">
-			</div>
+			</div>	
 			<div class="input-group mb-2">
-				<span class="input-group-text">번호</span>
+				<span class="input-group-text">전화</span>
 				<input name="phone" class="form-control" value="{{phone}}">
-			</div>
+			</div>	
 			<div class="input-group mb-2">
 				<span class="input-group-text">주소</span>
 				<input name="address1" class="form-control" value="{{address1}}" readonly>
-				<button id="btn-search" class="btn btn-warning" type="button">검색!</button>
-			</div>
+				<button id="btn-search" class="btn btn-primary" type="button">검색</button>
+			</div>	
 			<input name="address2" class="form-control" placeholder="상세주소" value="{{address2}}">
-			<div class="text-center mt-3">
-				<button id="btn-update" class="btn btn-warning" type="button">수정</button>
+			<div class="text-center my-3">
+				<button id="btn-update" class="btn btn-primary" type="button">수정</button>
 				<button class="btn btn-secondary" type="reset">취소</button>
-			</div>
-		</form>
-	</div>
+			</div>	
+		</form>	
+	</div>	
 </script>
-
 <script>
-	$("#div_user").on("click", "#btn-update", function (e) {
-		const uname = $(frm.uname).val();
-		const phone = $(frm.phone).val();
-		const address1 = $(frm.address1).val();
-		const address2 = $(frm.address2).val();
-		//alert(`${uname}\n${phone}\n${address1}\n${address2}\n`)
-		if (confirm("수정 저장 하시겠슴까?")) {
+	$("#div_user").on("click", "#btn-update", function(e){
+		const uname=$(frm.uname).val();
+		const phone=$(frm.phone).val();
+		const address1=$(frm.address1).val();
+		const address2=$(frm.address2).val();
+		//alert(`${uname}\n${phone}\n${address1}\n${address2}`);
+		if(confirm("수정된 정보를 저장하실래요?")){
 			$.ajax({
-				type: "post",
-				url: "/users/update",
-				data: JSON.stringify({uid: sessionStorage.getItem("uid"), uname, phone, address1, address2}),
-				contentType: "application/JSON",
-				success: function () {
-					alert("수정 완료!!");
-					location.href = "/users/mypage"
+				type:"post",
+				url:"/users/update",
+				data:JSON.stringify({uid:sessionStorage.getItem("uid"),uname,phone,address1,address2}),
+				contentType:"application/JSON",
+				success:function(){
+					alert("수정완료!");
+					location.href="/users/mypage"
 				}
 			})
 		}
-	})
-
-	$("#div_user").on("click", "#btn-search", function () {
+	});
+	
+	$("#div_user").on("click", "#btn-search", function(){
 		new daum.Postcode({
-			oncomplete: function (data) {
-				const address = data.address;
-				const building = data.buildingName ? `(${data.buildingName})` : "";
+			oncomplete:function(data){
+				const address=data.address;
+				const building=data.buildingName ? `(${data.buildingName})` :'';
 				$(frm.address1).val(address + building);
 			}
 		}).open();
-	})
-
+	});
+	
 	$.ajax({
-		type: "get",
-		url: "/users/read?uid=" + sessionStorage.getItem("uid"),
-		success: function (data) {
-			const temp = Handlebars.compile($("#temp_user").html());
+		type:"get",
+		url:"/users/read?uid=" + sessionStorage.getItem("uid"),
+		success:function(data){
+			const temp=Handlebars.compile($("#temp_user").html());
 			$("#div_user").html(temp(data));
 		}
-	})
+	});
 </script>
+
+
+
+

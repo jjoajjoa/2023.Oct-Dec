@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.dao.PostDAO;
 
 @Service
-public class PostServiceImpl implements PostService {
+public class PostServiceImpl implements PostService{
 	@Autowired
 	PostDAO dao;
 	

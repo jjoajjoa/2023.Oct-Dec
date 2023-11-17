@@ -1,79 +1,77 @@
 <div class="my-5">
-	<h1 class="text-center mb-5">My page</h1>
+	<h1 class="text-center mb-5">마이페이지</h1>
 	<div id="div_mypage" class="row justify-content-center"></div>
 </div>
-
 <script id="temp_mypage" type="x-handlebars-template">
 	<div class="col-md-8">
 		<div class="text-center mb-3">
 			<img id="photo" src="{{photo photo}}" width="200" class="photo">
 			<input id="file" type="file" style="display:none;">
-			<div class="text-center mt-3">
-				<button id="btn-photo" class="btn btn-warning px-5">이미지 저장</button>
-			</div>
+			<div class="text-center mt-2">
+				<button id="btn-photo" class="btn btn-primary px-5">이미지저장</button>
+			</div>	
 		</div>
 		<div class="card p-3">
 			<div>
-				[이름] {{uname}} 
-				<a href="/users/password" class="btn btn-success btn-sm">비밀번호 변경</a> 
-			</div>
-			<div>[번호] {{phone}}</div>
-			<div>[주소] {{address1}} {{address2}}</div>
-			<div>[가입일] {{fmtdate}}</div>
-			<div class="text-center mt-3">
-				<a href="/users/update" class="btn btn-warning btn-sm">정보수정</a>
-			</div>
-		</div>
-	</div>
+				이름: {{uname}} 
+				<a href="/users/password" class="btn btn-danger btn-sm ms-3">비밀번호변경</a>
+			</div><hr>
+			<div>전화: {{phone}}</div><hr>
+			<div>주소: {{address1}} {{address2}}</div><hr>
+			<div>가입일: {{fmtdate}}</div><hr>
+			<div class="text-center">
+				<a href="/users/update" class="btn btn-primary px-5">정보수정</a>
+			</div>	
+		</div>		
+	<div>	
 </script>
-
 <script>
-	Handlebars.registerHelper("photo", function (photo) {
-		if (photo) {
+	Handlebars.registerHelper("photo", function(photo){
+		if(photo){
 			return "/display?file=" + photo;
-		} else {
+		}else{
 			return "http://via.placeholder.com/200x200";
 		}
 	})
 </script>
-
 <script>
-	$("#div_mypage").on("click", "#photo", function () {
-		$("#file").click();
-	})
-
-	$("#div_mypage").on("click", "#btn-photo", function () {
-		if ($("#file").val() == "") {
-			alert("수정할 이미지를 선택하세용!")
-		} else {
-			if (confirm("변경한 이미지를 저장하시겠슴까?")) {
+	$("#div_mypage").on("click", "#photo", function(){
+		$("#file").click();	
+	});
+	
+	$("#div_mypage").on("click", "#btn-photo", function(){
+		if($("#file").val()==""){
+			alert("수정할 이미지를 선택하세요!");
+		}else{
+			if(confirm("변경할 이미지를 저장하실래요?")){
+				//이미지 업로드
 				const formData = new FormData();
 				formData.append("file", $("#file")[0].files[0]);
 				formData.append("uid", sessionStorage.getItem("uid"));
 				$.ajax({
-					type: "post",
-					url: "/users/upload",
-					data: formData,
-					processData: false,
-					contentType: false,
-					success: function () {
-						alert("변경 완료!");
+					type:"post",
+					url:"/users/upload",
+					data:formData,
+					processData:false,
+					contentType:false,
+					success:function(){
+						alert("이미지가 변경되었습니다.");
 					}
 				})
 			}
-		}
-	})
-
-	$("#div_mypage").on("change", "#file", function (e) {
-		$("#photo").attr("src", URL.createObjectURL($("#file")[0].files[0]));
-	})
-
+		}	
+	});
+	
+	$("#div_mypage").on("change", "#file", function(e){
+		$("#photo").attr("src", URL.createObjectURL($("#file")[0].files[0]));	
+	});
+	
 	$.ajax({
-		type: "get",
-		url: "/users/read?uid=" + sessionStorage.getItem("uid"),
-		success: function (data) {
-			const temp = Handlebars.compile($("#temp_mypage").html());
+		type:"get",
+		url:"/users/read?uid=" + sessionStorage.getItem("uid"),
+		success:function(data){
+			const temp=Handlebars.compile($("#temp_mypage").html());
 			$("#div_mypage").html(temp(data));
 		}
-	})
+	});
 </script>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.ProfessorMapper">
+	<select id="total" resultType="int">
+		select count(*)
+		from professors
+		<if test="key=='pcode'">
+        	where pcode like concat('%', #{query}, '%')
+        </if>
+        <if test="key=='pname'">
+        	where pname like concat('%', #{query}, '%')
+        </if>
+        <if test="key=='dept'">
+        	where dept like concat('%', #{query}, '%')
+        </if>
+        <if test="key=='title'">
+        	where title like concat('%', #{query}, '%')
+        </if>
+	</select>
+    <select id="slist" resultType="hashmap">
+        select *, date_format(hiredate, '%Y-%m-%d') fmtdate, format(salary,0) fmtsalary
+        from professors
+        <if test="key=='pcode'">
+        	where pcode like concat('%', #{query}, '%')
+        </if>
+        <if test="key=='pname'">
+        	where pname like concat('%', #{query}, '%')
+        </if>
+        <if test="key=='dept'">
+        	where dept like concat('%', #{query}, '%')
+        </if>
+        <if test="key=='title'">
+        	where title like concat('%', #{query}, '%')
+        </if>
+        limit #{start}, #{size}
+    </select>
+	<update id="update">
+		update professors
+		set pname=#{pname},dept=#{dept}, title=#{title}, salary=#{salary}, hiredate=#{hiredate}
+		where pcode=#{pcode}
+	</update>
+	<select id="cou_list" resultType="hashmap">
+		select * 
+		from courses 
+		where instructor=#{pcode};
+	</select>
+	<select id="stu_list" resultType="hashmap">
+		select * 
+		from students 
+		where advisor=#{pcode};
+	</select>
+	<select id="read" resultType="hashmap">
+		select *, date_format(hiredate, '%Y-%m-%d') fmtdate, format(salary,0) fmtsalary
+        from professors
+        where pcode=#{pcode};
+	</select>
+	<insert id="insert">
+		insert into professors(pcode,pname,dept,title,salary,hiredate)
+		values(#{pcode},#{pname},#{dept},#{title},#{salary},#{hiredate})
+	</insert>
+    <select id="list" resultType="hashmap">
+        select *, date_format(hiredate, '%Y-%m-%d') fmtdate, format(salary,0) fmtsalary
+        from professors;
+    </select>
+    <select id="code" resultType="int">
+    	select max(pcode)+1 from professors;
+    </select>
+</mapper>

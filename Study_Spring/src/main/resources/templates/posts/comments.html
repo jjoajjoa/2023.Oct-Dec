@@ -1,190 +1,197 @@
 <style>
 	.hidden {
-		display: none;
+		display:none;
 	}
 </style>
-
 <div class="my-5">
-	<h1 class="text-center mb-5">댓글</h1>
-	<div id="btn-write" class="mb-5">
-		<button class="btn btn-warning w-100">작성하기</button>
+	<h1 class="text-center mt-5">댓글관리</h1>
+	<div class="my-5" id="btn-write">
+		<button class="btn btn-primary w-100">댓글작성</button>
 	</div>
-	<div id="div-write" class="mb-5" style="display: none;">
-		<textarea id="txt-body" class="form-control" rows="5" placeholder="예쁜말만 써주세용"></textarea>
+	<div class="my-5" id="div-write" style="display:none;">
+		<textarea id="txt-body" class="form-control" rows="5" placeholder="댓글내용을 입력하세요."></textarea>
 		<div class="text-end mt-2">
-			<button id="btn-insert" class="btn btn-warning px-5">등록</button>
-		</div>
+			<button class="btn btn-primary px-5" id="btn-insert">등록</button>
+		</div>	
 	</div>
 	<div id="div_comments"></div>
 	<div id="pagination" class="pagination justify-content-center mt-5"></div>
 </div>
-
 <script id="temp_comments" type="x-handlebars-template">
 	{{#each .}}
 		<div class="row">
-			<div class="col-3 text-center">
-				<img src="{{fn_photo photo}}" width="20" class="photo">
+			<div class="col-2 text-center">
+				<img src="{{fn_photo photo}}" width="50" class="photo"><br>
 				<small>{{uname}}</small>
 			</div>
 			<div class="col">
 				<div>{{fmtdate}}</div>
 				<div class="view">
 					[{{cid}}] {{body}}
-					<div class="text-end {{fn_hidden writer}} mb-2">
-						<button class="btn-update btn btn-warning btn-sm">수정</button>
-						<button class="btn-delete btn btn-secondary btn-sm" cid="{{cid}}">삭제</button>
-					</div>
+					<div class="text-end {{fn_hidden writer}}">
+						<button class="btn-update btn btn-success btn-sm">수정</button>
+						<button class="btn-delete btn btn-danger btn-sm" cid="{{cid}}">삭제</button>
+					</div>	
 				</div>
 				<div class="edit" style="display:none;">
 					<textarea class="body form-control" rows="5">{{body}}</textarea>
 					<div class="text-end mt-2">
-						<button class="btn-save btn btn-success btn-sm" cid="{{cid}}">저장</button>
-						<button class="btn-cencel btn btn-secondary btn-sm">취소</button>
-					</div>
-				</div>
+						<button class="btn-save btn btn-primary btn-sm" cid="{{cid}}">저장</button>
+						<button class="btn-cancel btn btn-secondary btn-sm">취소</button>
+					</div>	
+				</div>		
 			</div>
-		</div>
+		</div>	
 		<hr>
 	{{/each}}
 </script>
-
 <script>
-	Handlebars.registerHelper("fn_hidden", function (writer) {
-		if (sessionStorage.getItem("uid") != writer) {return "hidden";}
-	})
-
-	Handlebars.registerHelper("fn_photo", function (photo) {
-		if (photo) return "/display?file=" + photo;
-		else return "http://via.placeholder.com/100x100";
-	})
+	Handlebars.registerHelper("fn_hidden", function(writer){
+		if(sessionStorage.getItem("uid") != writer){
+			return "hidden";
+		}
+	});
+	
+	Handlebars.registerHelper("fn_photo", function(photo){
+		if(photo) {
+			return "/display?file=" + photo;
+		}else{
+			return "http://via.placeholder.com/100x100";
+		}
+	});
 </script>
-
 <script>
-	let page = 1;
-	let size = 3;
-	const post_id = "[[${param.pid}]]";
-	getTotal();
-
+	let page=1;
+	let size=3;
+	const post_id="[[${param.pid}]]";
+	
+	if(sessionStorage.getItem("uid")){
+		$("#btn-write, #div-write").toggle();	
+	}
+	
 	//수정버튼 클릭시
-	$("#div_comments").on("click", ".btn-update", function () {
-		const row = $(this).parent().parent().parent();
+	$("#div_comments").on("click", ".btn-update", function(){
+		const row=$(this).parent().parent().parent();
 		row.find(".view").hide();
 		row.find(".edit").show();
-	})
-	// 수정_취소 버튼 클릭시
-	$("#div_comments").on("click", ".btn-cancel", function () {
-		const row = $(this).parent().parent().parent();
+	});
+	
+	//취소버튼 클릭시
+	$("#div_comments").on("click", ".btn-cancel", function(){
+		const row=$(this).parent().parent().parent();
 		row.find(".view").show();
 		row.find(".edit").hide();
-	})
-
-	//수정_저장버튼 클릭시
-	$("#div_comments").on("click", ".btn-save", function () {
-		const row = $(this).parent().parent().parent();
-		const body = row.find(".body").val();
-		const cid = $(this).attr("cid");
-		if (confirm(`${cid}번 댓글 내용을 수정하실래요?`)) {
-			alert(body);
+	});
+	
+	//저장버튼 클릭시
+	$("#div_comments").on("click", ".btn-save", function(){
+		const row=$(this).parent().parent().parent();
+		const body=row.find(".body").val();
+		const cid=$(this).attr("cid");
+		if(confirm(`${cid}번 댓글 내용을 수정하실래요?`)){
+			//alert(body);
+			//댓글수정
 			$.ajax({
-				type: "post",
-				url: "/comments/update",
-				data: JSON.stringify({cid, body}),
-				contentType: "application/JSON",
-				success: function () {
-					alert("댓글 수정 완룡용");
+				type:"post",
+				url:"/comments/update",
+				data:JSON.stringify({cid, body}),
+				contentType:"application/JSON",
+				success:function(){
+					alert("댓글 내용이 수정되었습니다.");
 					getTotal();
 				}
 			})
 		}
-	})
-
-
-	if (sessionStorage.getItem("uid")) {
-		$("#btn-write, #div-write").toggle();
-	}
-	$("#btn-write").on("click", function () {
-		sessionStorage.setItem("target", "/posts/read?pid=" + post_id);
-		location.href = "/users/login";
-	})
-
-	$("#div_comments").on("click", ".btn-delete", function () {
-		const cid = $(this).attr("cid");
-		if (confirm(`${cid}번 댓글 삭제하실래요?`)) {
+	});
+	
+	$("#div_comments").on("click", ".btn-delete", function(){
+		const cid=$(this).attr("cid");
+		if(confirm(`${cid}번 댓글을 삭제하실래요?`)) {
+			//댓글삭제
 			$.ajax({
-				type: "get",
-				url: "/comments/delete",
-				data: {cid},
-				success: function () {
-					page = 1;
+				type:"get",
+				url:"/comments/delete",
+				data:{cid},
+				success:function(){
+					page=1;
 					getTotal();
-
 				}
 			})
 		}
-	})
-
-	$("#btn-insert").on("click", function () {
-		const writer = sessionStorage.getItem("uid");
-		const body = $("#txt-body").val();
-		if (body == "") {
-			alert("내용을 입력해!");
+	});
+	
+	$("#btn-insert").on("click", function(){
+		const writer=sessionStorage.getItem("uid");
+		const body=$("#txt-body").val();
+		const pid=post_id;
+		if(body=="") {
+			alert("댓글 내용을 입력하세요!");
 			$("#txt-body").focus();
 			return;
 		}
+		//댓글등록
+		//alert(`${writer}\n${body}\n${pid}`);
 		$.ajax({
-			type: "post",
-			url: "/comments/insert",
-			data: JSON.stringify({pid, body, writer}),
-			contentType: "application/JSON",
-			success: function () {
-				alert("댓글 등록 완룡용");
+			type:"post",
+			url:"/comments/insert",
+			data:JSON.stringify({pid, body, writer}),
+			contentType:"application/JSON",
+			success:function(){
+				alert("댓글이 등록되었습니다.");
 				getTotal();
 				$("#txt-body").val("");
 			}
 		})
 	})
-
-	function getTotal() {
+	
+	$("#btn-write").on("click", function(){
+		sessionStorage.setItem("target", "/posts/read?pid=" + post_id);	
+		location.href="/users/login";
+	});
+	
+	getTotal();
+	function getTotal(){
 		$.ajax({
-			type: "get",
-			url: "/comments/total",
-			data: {pid: post_id},
-			success: function (data) {
-				if (data > size) {
-					const totalPages = Math.ceil(data / size);
-					$("#pagination").twbsPagination("changeTotalPages", totalPages, page)
-				} else {
+			type:"get",
+			url:"/comments/total",
+			data:{pid:post_id},
+			success:function(data){
+				if(data>size){
+					$("#pagination").show();
+					const totalPages = Math.ceil(data/size);
+	            	$("#pagination").twbsPagination("changeTotalPages", totalPages, page);
+	            }else{
 					getComments();
 					$("#pagination").hide();
-				}
+				}		
 			}
 		})
 	}
-
-	function getComments() {
+	
+	function getComments(){
 		$.ajax({
-			type: "get",
-			url: "/comments/list.json",
-			data: {page, size, pid: post_id},
-			success: function (data) {
-				const temp = Handlebars.compile($("#temp_comments").html());
+			type:"get",
+			url:"/comments/list.json",
+			data:{page, size, pid:post_id},
+			success:function(data){
+				const temp=Handlebars.compile($("#temp_comments").html());
 				$("#div_comments").html(temp(data));
 			}
 		})
 	}
-
+	
 	$('#pagination').twbsPagination({
-		totalPages: 10, //총 페이지 번호 수
-		visiblePages: 5, // 하단에서 한 번에 보여 지는 페이지 번호 수
-		startPage: 1, // 시작 시 표시되는 현재 페이지
-		initiateStartPageClick: false, // 플러그인이 시작 시 페이지 버튼 클릭 여부 (default : true) 
-		first: '<<', // 페이지네이션 버튼 중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
-		prev: '<', // 이전 페이지 버튼에 쓰여 있는 텍스트
-		next: '>', // 다음 페이지 버튼에 쓰여 있는 텍스트
-		last: '>>', // 페이지네이션 버튼 중 마지막으로 가는 버튼에 쓰여 있는 텍스트
-		onPageClick: function (event, clickPage) {
-			page = clickPage;
-			getComments();
-		}
-	});
+        totalPages:10, //총 페이지 번호 수
+        visiblePages: 5, // 하단에서 한 번에 보여 지는 페이지 번호 수
+        startPage : 1, // 시작 시 표시되는 현재 페이지
+        initiateStartPageClick: false, // 플러그인이 시작 시 페이지 버튼 클릭 여부 (default : true) 
+        first : '<<', // 페이지네이션 버튼 중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
+        prev : '<', // 이전 페이지 버튼에 쓰여 있는 텍스트
+        next : '>', // 다음 페이지 버튼에 쓰여 있는 텍스트
+        last : '>>', // 페이지네이션 버튼 중 마지막으로 가는 버튼에 쓰여 있는 텍스트
+        onPageClick: function (event, clickPage) {
+            page=clickPage;
+            getComments(); 
+        }
+    });
 </script>

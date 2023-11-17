@@ -2,7 +2,7 @@ package com.example.domain;
 
 import java.util.Date;
 
-public class PostVO extends UserVO {
+public class PostVO extends UserVO{
 	private int pid;
 	private String title;
 	private String body;
@@ -10,7 +10,7 @@ public class PostVO extends UserVO {
 	private Date regdate;
 	private int viewcnt;
 	private int commcnt;
-
+	
 	public int getCommcnt() {
 		return commcnt;
 	}
@@ -53,5 +53,10 @@ public class PostVO extends UserVO {
 	public void setRegdate(Date regdate) {
 		this.regdate = regdate;
 	}
-
+	
+	@Override
+	public String toString() {
+		return "PostVO [pid=" + pid + ", title=" + title + ", body=" + body + ", writer=" + writer + ", regdate="
+				+ regdate + "]";
+	}
 }

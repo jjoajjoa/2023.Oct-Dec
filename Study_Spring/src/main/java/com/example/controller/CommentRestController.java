@@ -1,8 +1,5 @@
 package com.example.controller;
 
-import java.util.HashMap;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +11,8 @@ import com.example.dao.CommentDAO;
 import com.example.domain.CommentVO;
 import com.example.service.CommentService;
 
+import java.util.*;
+
 @RestController
 @RequestMapping("/comments")
 public class CommentRestController {
@@ -23,12 +22,12 @@ public class CommentRestController {
 	@Autowired
 	CommentService service;
 	
-	@GetMapping("/list.json") //localhost:8080/comments/list.json?pid=1021&page=1&size=5
-	public List<HashMap<String, Object>> list(int pid, int page, int size) {
+	@GetMapping("/list.json") //localhost:8080/comments/list.json?pid=517&page=1&size=3
+	public List<HashMap<String,Object>> list(int pid, int page, int size){
 		return dao.list(pid, page, size);
 	}
 	
-	@GetMapping("/total") //localhost:8080/comments/total?pid=1021
+	@GetMapping("/total")
 	public int total(int pid) {
 		return dao.total(pid);
 	}
@@ -48,3 +47,11 @@ public class CommentRestController {
 		dao.update(vo);
 	}
 }
+
+
+
+
+
+
+
+

@@ -1,0 +1,104 @@
+<div class="my-5">
+	<h1 class="text-center mb-5">교수정보</h1>
+	<div id="div_pro" class="row justify-content-center"></div>
+	
+	<ul class="nav nav-tabs mt-5" id="myTab" role="tablist">
+		<li class="nav-item" role="presentation">
+			<button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button"
+				role="tab" aria-controls="home-tab-pane" aria-selected="true">지도학생</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button"
+				role="tab" aria-controls="profile-tab-pane" aria-selected="false">담당강좌</button>
+		</li>
+	</ul>
+	<div class="tab-content" id="myTabContent">
+		<div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+			<div id="div_stu" class="my-5 mx-3"></div>
+		</div>
+		<div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+			<div id="div_cou" class="my-5 mx-3"></div>
+		</div>
+	</div>
+</div>
+<script id="temp_stu" type="x-handlebars-template">
+	<table class="table">
+		{{#each .}}
+		<tr>
+			<td>{{scode}}</td>
+			<td>{{sname}}</td>
+			<td>{{dept}}</td>
+			<td>{{year}}</td>
+			<td>{{birthday}}</td>
+		</tr>	
+		{{/each}}
+	</table>	
+</script>
+
+<script id="temp_cou" type="x-handlebars-template">
+	<table class="table">
+		{{#each .}}
+		<tr>
+			<td>{{lcode}}</td>
+			<td>{{lname}}</td>
+			<td>{{hours}}</td>
+			<td>{{room}}</td>
+			<td>{{persons}}/{{capacity}}</td>
+		</tr>	
+		{{/each}}
+	</table>	
+</script>
+	
+<script id="temp_pro" type="x-handlebars-template">
+	<div class="col-md-8">
+		<div class="card p-3">
+			<div>교수이름: {{pname}} ({{pcode}})</div><hr>
+			<div>교수학과: {{dept}}</div><hr>
+			<div>교수직급: {{title}} ({{fmtdate}})</div><hr>
+			<div class="text-center">
+				<a href="/pro/update?pcode={{pcode}}" class="btn btn-primary px-5">정보수정</a>
+			</div>
+		</div>	
+	</div>
+</script>
+	
+<script>
+	const pcode="[[${param.pcode}]]";
+	$(window).on("load", function(){
+		$.ajax({
+			type:"get",
+			url:"/pro/read.json",
+			data:{pcode},
+			success:function(data){
+				//console.log(data);
+				const temp=Handlebars.compile($("#temp_pro").html());
+				$("#div_pro").html(temp(data));	
+			}
+		});
+		
+		$.ajax({
+			type:"get",
+			url:"/pro/stu/list.json",
+			data:{pcode},
+			success:function(data){
+				const temp=Handlebars.compile($("#temp_stu").html());
+				$("#div_stu").html(temp(data));	
+			}
+		});
+		
+		$.ajax({
+			type:"get",
+			url:"/pro/cou/list.json",
+			data:{pcode},
+			success:function(data){
+				const temp=Handlebars.compile($("#temp_cou").html());
+				$("#div_cou").html(temp(data));	
+			}
+		});
+	});
+</script>
+
+
+
+
+

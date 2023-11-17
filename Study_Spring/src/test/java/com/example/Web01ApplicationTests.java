@@ -8,7 +8,7 @@ import com.example.dao.MysqlDAO;
 
 @SpringBootTest
 class Web01ApplicationTests {
-
+    
 	@Test
 	void contextLoads() {
 	}
@@ -18,8 +18,6 @@ class Web01ApplicationTests {
 	
 	@Test
 	void now() {
-		System.out.println("현재 시각: " + dao.now());
-		
+		System.out.println("현재날짜:" + dao.now());
 	}
-
 }

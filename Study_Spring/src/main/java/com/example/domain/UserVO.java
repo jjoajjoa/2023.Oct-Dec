@@ -11,30 +11,7 @@ public class UserVO {
 	private String phone;
 	private String address1;
 	private String address2;
-	public String getUid() {
-		return uid;
-	}
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
-	public String getUpass() {
-		return upass;
-	}
-	public void setUpass(String upass) {
-		this.upass = upass;
-	}
-	public String getUname() {
-		return uname;
-	}
-	public void setUname(String uname) {
-		this.uname = uname;
-	}
-	public Date getRegdate() {
-		return regdate;
-	}
-	public void setRegdate(Date regdate) {
-		this.regdate = regdate;
-	}
+	
 	public String getPhoto() {
 		return photo;
 	}
@@ -59,10 +36,34 @@ public class UserVO {
 	public void setAddress2(String address2) {
 		this.address2 = address2;
 	}
+	public String getUid() {
+		return uid;
+	}
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
+	public String getUpass() {
+		return upass;
+	}
+	public void setUpass(String upass) {
+		this.upass = upass;
+	}
+	public String getUname() {
+		return uname;
+	}
+	public void setUname(String uname) {
+		this.uname = uname;
+	}
+	public Date getRegdate() {
+		return regdate;
+	}
+	public void setRegdate(Date regdate) {
+		this.regdate = regdate;
+	}
+	
 	@Override
 	public String toString() {
 		return "UserVO [uid=" + uid + ", upass=" + upass + ", uname=" + uname + ", regdate=" + regdate + ", photo="
 				+ photo + ", phone=" + phone + ", address1=" + address1 + ", address2=" + address2 + "]";
 	}
-	
 }

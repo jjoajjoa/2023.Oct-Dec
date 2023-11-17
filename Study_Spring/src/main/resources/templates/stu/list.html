@@ -1,0 +1,105 @@
+<div class="my-5">
+	<h1 class="text-center">학생 목록</h1>
+	<div class="row">
+		<div class="col-6">
+			<form name="frm" class="input-group mb-3">
+				<select class="form-select" name="key">
+					<option value="sname">이름</option>
+					<option value="scode">학번</option>
+					<option value="dept">전공</option>
+					<option value="pname">지도교수</option>
+				</select>
+				<input name="query" class="form-control" placeholder="검색어">
+				<button class="btn btn-warning">검색</button>
+				<span id="total" class="mt-2 ms-3"></span>
+			</form>
+		</div>
+		<div class="text-end col">
+			<a href="/stu/insert" class="btn btn-warning">학생등록</a>
+		</div>
+		<hr>
+	</div>
+	<div id="div_stu"></div>
+	<div id="pagination" class="pagination justify-content-center mt-5"></div>
+</div>
+
+<script id="temp_stu" type="x-handlebars-template">
+   <table class="table">
+      {{#each list}}
+         <tr>
+            <td>{{scode}}</td>
+            <td><a href="/stu/read?scode={{scode}}">{{sname}}</a></td>
+            <td>{{dept}}</td>
+            <td>{{year}}</td>
+            <td>{{fmtdate}}</td>
+            <td>{{pname}} [{{advisor}}]</td>
+         </tr>
+      {{/each}}
+   </table>
+</script>
+
+<script>
+	let page = 1;
+	const size = 3;
+	getTotal();
+
+	$(frm).on("submit", function (e) {
+		e.preventDefault();
+		page = 1;
+		getTotal();
+	});
+
+	function getTotal() {
+		const query = $(frm.query).val();
+		const key = $(frm.key).val();
+		$.ajax({
+			type: "get",
+			url: "/stu/total",
+			data: {query, key},
+			success: function (data) {
+				$("#total").html(`총 ${data}건`);
+				if (data > size) {
+					$("#pagination").show();
+					const totalPages = Math.ceil(data / size);
+					$("#pagination").twbsPagination("changeTotalPages", totalPages, page)
+				} else {
+					$("#pagination").hide();
+					getList();
+				}
+			}
+		})
+	}
+
+	function getList() {
+		const query = $(frm.query).val();
+		const key = $(frm.key).val();
+		$.ajax({
+			type: "get",
+			url: "/stu/list.json",
+			data: {size, page, key, query},
+			success: function (data) {
+				if (data == 0) {
+					$("#div_stu").html("<h3 class='text-center my-5'>검색된 내용이 없습니당</h3>");
+				} else {
+					const temp = Handlebars.compile($("#temp_stu").html());
+					$("#div_stu").html(temp(data));
+				}
+			}
+		});
+	}
+
+	$('#pagination').twbsPagination({
+		totalPages: 10, //총 페이지 번호 수
+		visiblePages: 5, // 하단에서 한 번에 보여 지는 페이지 번호 수
+		startPage: 1, // 시작 시 표시되는 현재 페이지
+		initiateStartPageClick: false, // 플러그인이 시작 시 페이지 버튼 클릭 여부 (default : true) 
+		first: '<<', // 페이지네이션 버튼 중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
+		prev: '<', // 이전 페이지 버튼에 쓰여 있는 텍스트
+		next: '>', // 다음 페이지 버튼에 쓰여 있는 텍스트
+		last: '>>', // 페이지네이션 버튼 중 마지막으로 가는 버튼에 쓰여 있는 텍스트
+		onPageClick: function (event, clickPage) {
+			page = clickPage;
+			getList();
+		}
+	});
+</script>

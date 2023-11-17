@@ -2,12 +2,13 @@ package com.example.domain;
 
 import java.util.Date;
 
-public class CommentVO extends UserVO {
+public class CommentVO extends UserVO{
 	private int cid;
 	private int pid;
 	private String body;
 	private String writer;
 	private Date regdate;
+	
 	public int getCid() {
 		return cid;
 	}
@@ -38,10 +39,10 @@ public class CommentVO extends UserVO {
 	public void setRegdate(Date regdate) {
 		this.regdate = regdate;
 	}
+	
 	@Override
 	public String toString() {
 		return "CommentVO [cid=" + cid + ", pid=" + pid + ", body=" + body + ", writer=" + writer + ", regdate="
 				+ regdate + "]";
 	}
-	
 }

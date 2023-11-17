@@ -10,16 +10,16 @@ import org.springframework.stereotype.Repository;
 import com.example.domain.CommentVO;
 
 @Repository
-public class CommentDAOImpl implements CommentDAO {
+public class CommentDAOImpl implements CommentDAO{
 	@Autowired
 	SqlSession session;
-	String namespace = "com.example.mapper.CommentMapper";
-
+	String namespace="com.example.mapper.CommentMapper";
+	
 	@Override
 	public List<HashMap<String, Object>> list(int pid, int page, int size) {
-		HashMap<String, Object> map = new HashMap<>();
+		HashMap<String,Object> map=new HashMap<>();
 		map.put("pid", pid);
-		map.put("start", (page - 1) * size);
+		map.put("start", (page-1)*size);
 		map.put("size", size);
 		return session.selectList(namespace + ".list", map);
 	}
@@ -48,5 +48,4 @@ public class CommentDAOImpl implements CommentDAO {
 	public CommentVO read(int cid) {
 		return session.selectOne(namespace + ".read", cid);
 	}
-
 }

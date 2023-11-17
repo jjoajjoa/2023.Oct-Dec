@@ -1,28 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.mapper.MysqlMapper">
-
+<mapper namespace="com.example.mapper.PostMapper">
 	<update id="viewcnt">
 		update posts
-		set viewcnt = viewcnt + 1
-		where pid = #{pid};
+		set viewcnt=viewcnt + 1
+		where pid=#{pid}
 	</update>
 	<update id="commcnt">
 		update posts
-		set commcnt = commcnt + #{cnt}
-		where pid = #{pid};
+		set commcnt=commcnt + #{cnt}
+		where pid=#{pid}
 	</update>
-
-	<select id="list" resultType="hashmap">
-		select p.*, date_format(p.regdate,'%Y-%m-%d %T') fmtdate, uname
-		from posts p, users u
-		where writer = uid
+    <select id="list" resultType="hashmap">
+        select p.*, date_format(p.regdate, '%Y-%m-%d %T') as fmtdate, u.uname
+		from posts as p, users as u
+		where uid=writer
 		order by pid desc;
-	</select>
-	<select id="list1" resultType="hashmap">
-		select p.*, u.uname, date_format(p.regdate, '%Y-%m-%d %T') fmtdate
+    </select>
+    <select id="total" resultType="int">
+    	select count(*) 
+    	from posts
+    	<if test="key=='title'">
+			where title like concat('%', #{query}, '%')
+		</if>
+		<if test="key=='body'">
+			where body like concat('%', #{query}, '%')
+		</if>
+		<if test="key=='writer'">
+			where writer like concat('%', #{query}, '%') 
+		</if>
+    </select>
+    <select id="list1" resultType="hashmap">
+        select p.*, u.uname, date_format(p.regdate, '%Y-%m-%d %T') fmtdate
 		from posts p, users u
-		where p.writer=u.uid
+		where p.writer = u.uid 
 		<if test="key=='title'">
 			and title like concat('%', #{query}, '%')
 		</if>
@@ -30,40 +41,36 @@
 			and body like concat('%', #{query}, '%')
 		</if>
 		<if test="key=='writer'">
-			and writer like concat('%', #{query}, '%')
+			and writer like concat('%', #{query}, '%') 
 		</if>
 		order by pid desc
 		limit #{start}, #{size};
-	</select>
-	<select id="total" resultType="int">
-		select count(*)
-		from posts
-		<if test="key=='title'">
-			where title like concat('%', #{query}, '%')
-		</if>
-		<if test="key=='body'">
-			where body like concat('%', #{query}, '%')
-		</if>
-		<if test="key=='writer'">
-			where writer like concat('%', #{query}, '%')
-		</if>
-	</select>
-	<select id="read" resultType="hashmap">
-		select p.*, date_format(p.regdate,'%Y-%m-%d %T') fmtdate, uname
-		from posts p, users u
-		where writer = uid and pid = #{pid};
-	</select>
-	<insert id="insert">
-		insert into posts(title, body, writer)
-		values(#{title}, #{body},#{writer});
-	</insert>
-	<delete id="delete">
-		delete from posts
-		where pid = #{pid};
-	</delete>
-	<update id="update">
-		update posts
-		set title=#{title}, body=#{body}, regdate=now()
-		where pid = #{pid};
-	</update>
+    </select>
+    
+    <select id="read" resultType="hashmap">
+    	select p.*, date_format(p.regdate, '%Y-%m-%d %T') as fmtdate, u.uname
+		from posts as p, users as u
+		where uid=writer and pid=#{pid}
+    </select>
+    <insert id="insert">
+    	insert into posts(title, body, writer)
+    	values(#{title}, #{body}, #{writer})
+    </insert>
+    <delete id="delete">
+    	delete from posts
+    	where pid=#{pid}
+    </delete>
+    <update id="update">
+    	update posts 
+    	set title=#{title},body=#{body},regdate=now()
+    	where pid=#{pid}
+    </update>
 </mapper>
+
+
+
+
+
+
+
+

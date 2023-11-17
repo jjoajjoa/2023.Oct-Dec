@@ -13,7 +13,7 @@ public class UserDAOImpl implements UserDAO{
 	@Autowired
 	SqlSession session;
 	String namespace="com.example.mapper.UserMapper";
-
+	
 	@Override
 	public HashMap<String, Object> read(String uid) {
 		return session.selectOne(namespace + ".read", uid);
@@ -43,5 +43,4 @@ public class UserDAOImpl implements UserDAO{
 	public void insert(UserVO vo) {
 		session.insert(namespace + ".insert", vo);
 	}
-
 }
