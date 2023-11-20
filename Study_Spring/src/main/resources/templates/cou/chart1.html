@@ -15,7 +15,7 @@
 				let rows = [];
 				rows.push(['강의이름', '평균점수']);
 				data.forEach(c => {
-					rows.push([`${c.lname}(${c.ccode})`, c.avg]);
+					rows.push([`${c.lname}(${c.lcode})`, c.avg]);
 				});
 				barChart(rows);
 			}
