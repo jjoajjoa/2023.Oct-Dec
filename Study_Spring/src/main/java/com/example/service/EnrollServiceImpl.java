@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.dao.EnrollDAO;
+import com.example.domain.EnrollVO;
 
 @Service
 public class EnrollServiceImpl implements EnrollService {
@@ -13,16 +14,16 @@ public class EnrollServiceImpl implements EnrollService {
 
 	@Transactional
 	@Override
-	public void delete(String scode, String lcode) {
-		dao.delete(scode, lcode);
-		dao.persons(lcode, -1);
+	public void delete(EnrollVO vo) {
+		dao.delete(vo);
+		dao.persons(vo.getLcode(), -1);
 	}
 
 	@Transactional
 	@Override
-	public void insert(String scode, String lcode) {
-		dao.insert(scode, lcode);
-		dao.persons(lcode, 1);
+	public void insert(EnrollVO vo) {
+		dao.insert(vo);
+		dao.persons(vo.getLcode(), 1);
 	}
 
 }

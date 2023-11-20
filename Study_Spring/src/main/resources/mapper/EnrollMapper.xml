@@ -3,15 +3,30 @@
 <mapper namespace="com.example.mapper.EnrollMapper">
 	<delete id="delete">
 		delete from enrollments
-		where lcode=#{lcode} and scode=#{scode}
+		where lcode=#{lcode} and
+		scode=#{scode}
 	</delete>
 	<update id="persons">
 		update courses
 		set persons = persons + #{count}
-		where lcode=#{lcode}
+		where
+		lcode=#{lcode}
 	</update>
 	<insert id="insert">
 		insert into enrollments(scode, lcode, edate)
 		values(#{scode}, #{lcode}, now())
 	</insert>
+	<select id="read" resultType="hashmap">
+		select *
+		from enrollments
+		where
+		lcode=#{lcode} and scode=#{scode}
+	</select>
+	<update id="grade">
+		update enrollments
+		set grade = #{grade}
+		where
+		lcode=#{lcode} and
+		scode=#{scode}
+	</update>
 </mapper>

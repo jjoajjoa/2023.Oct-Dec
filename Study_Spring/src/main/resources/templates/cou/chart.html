@@ -1,0 +1,43 @@
+<div class="row my-5">
+	<div class="col">
+		<h1 class="text-center mb-5" id="title"></h1>
+		<div id="columnchart_material" style="width:90%; height:500px;"></div>
+	</div>
+</div>
+<script>
+	lcode = "[[${param.lcode}]]";
+	lname = "[[${param.lname}]]";
+	$("#title").html(`${lname} 학생별 성적`);
+	getData();
+	function getData() {
+		$.ajax({
+			type: "get",
+			url: "/cou/enroll.json",
+			data: {lcode},
+			success: function (data) {
+				let rows = [];
+				rows.push(['학생이름', '점수']);
+				data.forEach(s => {
+					rows.push([`${s.sname}(${s.scode})`, s.grade]);
+				});
+				barChart(rows);
+			}
+		});
+	}
+</script>
+
+<script type="text/javascript">
+	function barChart(rows) {
+		google.charts.load('current', {'packages': ['bar']});
+		google.charts.setOnLoadCallback(drawChart);
+		function drawChart() {
+			var data = google.visualization.arrayToDataTable(rows);
+			var options = {
+				bars: 'horizontal'
+			};
+
+			var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+			chart.draw(data, google.charts.Bar.convertOptions(options));
+		}
+	}
+</script>

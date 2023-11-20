@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mapper.CourseMapper">
+	<select id="graph" resultType="hashmap">
+		select e.lcode, lname, avg(grade) avg
+		from enrollments e, courses c
+		where e.lcode = c.lcode
+		group by e.lcode;
+	</select>
 	<select id="enroll" resultType="hashmap">
-		select * from cou_enroll
+		select *
+		from cou_enroll
 		where
-		lcode = #{lcode}
+		lcode=#{lcode}
 	</select>
 	<select id="read" resultType="hashmap">
-		select * from view_cou
-		where lcode = #{lcode}
+		select *
+		from view_cou
+		where
+		lcode=#{lcode}
 	</select>
 	<select id="list" resultType="hashmap">
-		select * from view_cou
+		select *
+		from view_cou
 		<if test="key=='lcode'">
 			where lcode like concat('%', #{query}, '%')
 		</if>

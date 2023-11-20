@@ -10,9 +10,12 @@
 					<option value="pname">담당교수</option>
 				</select>
 				<input name="query" class="form-control ms-2" placeholder="검색어">
-				<button class="btn btn-primary">검색</button>
+				<button class="btn btn-warning">검색</button>
 				<span id="total" class="mt-2 ms-3"></span>
 			</form>
+		</div>
+		<div class="col text-end">
+			<a href="/cou/graph1" class="btn btn-success btn-sm">강의별평균</a>
 		</div>
 	</div>
 	<hr>
@@ -28,6 +31,9 @@
          <td>{{hours}}({{room}})</td>
          <td>{{pname}}({{instructor}})</td>
          <td class="text-end">{{persons}}/{{capacity}}</td>
+         <td class="text-end">
+			 <a href="/cou/graph?lcode={{lcode}}&lname={{lname}}" class="btn btn-warning btn-sm">그래프</a>
+		 </td>
       </tr>   
       {{/each}}
    </table>   
