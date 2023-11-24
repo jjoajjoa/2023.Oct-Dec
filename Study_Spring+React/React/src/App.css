@@ -1,0 +1,42 @@
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.ellipsis2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.input-group-text {
+  width: 120px;
+  justify-content: center;
+}
+
+.photo {
+  border-radius: 50%;
+  border: 1px solid gray;
+  cursor: pointer;
+}
+
+
+a {
+  text-decoration: none !important;
+  font-size: 1rem;
+  padding: 5px;
+  margin: 0px 5px;
+}
+
+.line {
+  border: 1px dotted gray;
+}
+
+.body {
+  cursor: pointer;
+}
