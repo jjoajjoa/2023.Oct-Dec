@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mapper.ShopMapper">
+	<update id="viewcnt">
+		update shop
+		set viewcnt = viewcnt + 1
+		where pid=#{pid}
+	</update>
 	<select id="total" resultType="int">
 		select count(*)
 		from shop
@@ -29,24 +34,41 @@
 	</select>
 	<delete id="delete">
 		delete from shop
-		where pid=#{pid}
+		where pid = #{pid}
 	</delete>
 	<select id="read" resultType="hashmap">
-		select *, date_format(regdate,
-		'%Y-%m-%d %T') fmtdate, format(lprice,0) fmtprice
+		select *, date_format(regdate, '%Y-%m-%d %T') fmtdate, format(lprice, 0) fmtprice
 		from shop
-		where
-		pid=#{pid}
+		where pid = #{pid}
 	</select>
+	<select id="info" resultType="hashmap">
+		select *, date_format(regdate, '%Y-%m-%d %T') fmtdate, format(lprice, 0) fmtprice,
+		(select count(*) from favorite where uid=#{uid} and pid=#{pid}) ucnt
+		from shop
+		where pid = #{pid}
+	</select>
+	<insert id="heart">
+		insert into favorite(uid, pid)
+		values(#{uid}, #{pid})
+	</insert>
+	<delete id="delete_heart">
+		delete from favorite
+		where uid=#{uid} and pid=#{pid}
+	</delete>
+	<update id="update_heart">
+		update shop
+      	set fcnt = fcnt + #{amount}
+      	where pid = #{pid}
+	</update>
 	<update id="update">
 		update shop
 		set title=#{title}, lprice=#{lprice},
-		maker=#{maker}
-		where pid=#{pid}
+		maker = #{maker}
+		where pid = #{pid}
 	</update>
 	<update id="image">
 		update shop
-		set image=#{image}
-		where pid=#{pid}
+		set image = #{image}
+		where pid = #{pid}
 	</update>
 </mapper>

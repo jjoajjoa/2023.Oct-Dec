@@ -56,4 +56,41 @@ public class ShopDAOImpl implements ShopDAO {
 	public void image(ShopVO vo) {
 		session.update(namespace + ".image", vo);
 	}
+
+	@Override
+	public void viewcnt(int pid) {
+		session.update(namespace + ".viewcnt", pid);
+	}
+
+	@Override
+	public HashMap<String, Object> read(int pid, String uid) {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("pid", pid);
+		map.put("uid", uid);
+		return session.selectOne(namespace + ".info", map);
+	}
+
+	@Override
+	public void heart(int pid, String uid) {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("pid", pid);
+		map.put("uid", uid);
+		session.insert(namespace + ".heart", map);
+	}
+
+	@Override
+	public void delete_heart(int pid, String uid) {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("pid", pid);
+		map.put("uid", uid);
+		session.delete(namespace + ".delete_heart", map);
+	}
+
+	@Override
+	public void update_heart(int pid, int amount) {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("pid", pid);
+		map.put("amount", amount);
+		session.update(namespace + ".update_heart", map);
+	}
 }

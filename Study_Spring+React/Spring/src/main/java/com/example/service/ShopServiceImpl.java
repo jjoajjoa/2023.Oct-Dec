@@ -52,6 +52,29 @@ public class ShopServiceImpl implements ShopService{
 		map.put("total", dao.total(vo));
 		return map;
 	}
+
+	@Transactional
+	@Override
+	public HashMap<String, Object> read(int pid, String uid) {
+		dao.viewcnt(pid);
+		return dao.read(pid, uid);
+	}
+	
+	@Transactional
+	@Override
+	public void delete_heart(int pid, String uid) {
+		dao.delete_heart(pid, uid);
+		dao.update_heart(pid, -1);
+	}
+	
+	@Transactional
+	@Override
+	public void heart(int pid, String uid) {
+		dao.heart(pid, uid);
+		dao.update_heart(pid, 1);
+	}
+
+
 }
 
 

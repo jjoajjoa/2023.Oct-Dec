@@ -65,4 +65,20 @@ public class ShopRestController {
 	public void update(@RequestBody ShopVO vo) {
 		dao.update(vo);
 	}
+	
+	@GetMapping("/info/{pid}") // 조회수용
+	public HashMap<String, Object> info(@PathVariable int pid, String uid) {
+		return service.read(pid, uid);
+	}
+	
+	@GetMapping("/insert/favorite")
+	public void insert(int pid, String uid) {
+		service.heart(pid, uid);
+	}
+	
+	@GetMapping("/delete/favorite")
+	public void delete(int pid, String uid) {
+		service.delete_heart(pid, uid);
+	}
+	
 }
