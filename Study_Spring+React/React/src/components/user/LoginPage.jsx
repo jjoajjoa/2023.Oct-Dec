@@ -32,7 +32,11 @@ const LoginPage = () => {
                 setCookie("uid", uid, 7);
             }
             sessionStorage.setItem("uid", uid);
-            window.location.href = "/";
+            if (sessionStorage.getItem("target")) {
+                window.location.href = sessionStorage.getItem("target");
+            } else {
+                window.location.href = "/";
+            }
         }
     }
 

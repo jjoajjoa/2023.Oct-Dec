@@ -6,15 +6,22 @@ import SearchPage from './shop/SearchPage';
 import ShopList from './shop/ShopList';
 import ShopUpdate from './shop/ShopUpdate';
 import LoginPage from './user/LoginPage';
+import { getCookie, delCookie } from "../common.js"
+import HomePage from './HomePage.jsx';
+import ShopInfo from './shop/ShopInfo.jsx';
 
 const NaviPage = () => {
     const location = useLocation();
     const path = location.pathname;
 
+    const uid = getCookie("uid");
+    if(uid) sessionStorage.setItem("uid", uid);
+
     const onLogout = (e) => {
         e.preventDefault();
         if (window.confirm("로그아웃 하시겟슴까?")) {
             sessionStorage.clear();
+            delCookie("uid")
             window.location.href = "/";
         }
     }
@@ -64,6 +71,9 @@ const NaviPage = () => {
                 <Route path="/shop/update/:pid" element={<ShopUpdate />} />
 
                 <Route path="/login" element={<LoginPage />} />
+
+                <Route path="/" element={<HomePage />} />
+                <Route path="/shop/info/:pid" element={<ShopInfo />} />
             </Routes>
         </>
     )
