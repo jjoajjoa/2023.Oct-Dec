@@ -49,3 +49,8 @@ a {
   color: red;
   cursor: pointer;
 }
+
+.cart_input_group {
+  max-width: 130px;
+  margin: 0 auto;
+}

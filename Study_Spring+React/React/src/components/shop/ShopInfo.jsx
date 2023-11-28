@@ -34,6 +34,15 @@ const ShopInfo = () => {
         getShop();
     }
 
+    const onClickCart = async () => {
+        await axios.post("/cart/insert", { uid: sessionStorage.getItem("uid"), pid })
+        if (window.confirm("쇼핑을 계속 하시겠슴가?")) {
+            window.location.href = "/";
+        } else {
+            window.location.href = "/cart/list";
+        }
+    }
+
     useEffect(() => { getShop(); }, [])
 
     return (
@@ -59,7 +68,8 @@ const ShopInfo = () => {
                     <div>[등록일] {fmtdate}</div>
                     <hr />
                     <div className='text-center mt-5'>
-                        <Button className='me-3' variant='outline-primary'>장바구니</Button>
+                        <Button onClick={onClickCart}
+                            className='me-3' variant='outline-primary'>장바구니</Button>
                         <Button variant='outline-dark'>바로구매</Button>
                     </div>
                 </Col>

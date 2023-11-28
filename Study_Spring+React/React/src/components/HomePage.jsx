@@ -4,6 +4,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Spinner, Row, Col, Card, InputGroup, Form, Button } from 'react-bootstrap';
 import "./Pagination.css";
 import Pagination from 'react-js-pagination';
+import { FaHeart } from "react-icons/fa";
+import { BsChatLeftDots } from "react-icons/bs";
 
 const HomePage = () => {
     const location = useLocation();
@@ -64,6 +66,7 @@ const HomePage = () => {
                                 </Card.Body>
                                 <Card.Footer>
                                     <small>조아용 {shop.fcnt} </small>
+                                    <small>조회수 {shop.reviewcnt} </small>
                                 </Card.Footer>
                             </Card>
                         </Link>
