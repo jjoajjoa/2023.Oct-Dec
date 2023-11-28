@@ -4,6 +4,10 @@
 
 <div>
   <p>
+  <h4>DataBase</h4>
+    <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white">
+  </p>
+  <p>
   <h4>231004~231023</h4>
     Back: <img src="https://img.shields.io/badge/Node.js-#339933?style=for-the-badge&logo=nodedotjs&logoColor=white">
     <br>
