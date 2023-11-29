@@ -10,13 +10,16 @@ import { getCookie, delCookie } from "../common.js"
 import HomePage from './HomePage.jsx';
 import ShopInfo from './shop/ShopInfo.jsx';
 import CartList from './shop/CartList.jsx';
+import MyPage from './user/MyPage.jsx';
+import OrderComplete from './shop/OrderComplete.jsx';
+import OrderList from './shop/OrderList.jsx';
 
 const NaviPage = () => {
     const location = useLocation();
     const path = location.pathname;
 
     const uid = getCookie("uid");
-    if(uid) sessionStorage.setItem("uid", uid);
+    if (uid) sessionStorage.setItem("uid", uid);
 
     const onLogout = (e) => {
         e.preventDefault();
@@ -43,6 +46,9 @@ const NaviPage = () => {
                             </Nav.Link>
                             <Nav.Link href="/shop/list" className={path.indexOf('/shop/') !== -1 && 'active'}>
                                 상품목록
+                            </Nav.Link>
+                            <Nav.Link href="/order/list" className={path.indexOf('/order/') !== -1 && 'active'}>
+                                주문목록
                             </Nav.Link>
                             <Nav.Link href="/cart/list" className={path.indexOf('/cart/') !== -1 && 'active'}>
                                 장바구니
@@ -75,10 +81,13 @@ const NaviPage = () => {
                 <Route path="/shop/update/:pid" element={<ShopUpdate />} />
 
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/mypage" element={<MyPage />} />
 
                 <Route path="/" element={<HomePage />} />
                 <Route path="/shop/info/:pid" element={<ShopInfo />} />
                 <Route path="/cart/list" element={<CartList />} />
+                <Route path="/order/complete/:oid" element={<OrderComplete />} />
+                <Route path="/order/list" element={<OrderList />} />
             </Routes>
         </>
     )
