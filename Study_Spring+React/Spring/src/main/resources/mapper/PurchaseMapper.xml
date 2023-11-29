@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.PurchaseMapper">
+	<insert id="insert_purchase">
+		insert into purchase(oid, uid, uname, phone,
+		address1, address2, sum)
+		values(#{oid}, #{uid}, #{uname}, #{phone},
+		#{address1}, #{address2},
+		#{sum})
+	</insert>
+	<insert id="insert_order">
+		insert into orders(oid, pid, lprice, qnt)
+		values(#{oid}, #{pid}, #{lprice}, #{qnt})
+	</insert>
+	<select id="list_purchase" resultType="hashmap">
+		select *,
+		format(sum, 0) as
+		fmtsum,
+		date_format(regdate, '%Y-%m-%d %T') as fmtdate
+		from purchase
+		where uid=#{uid}
+		order by regdate desc
+		limit #{start}, #{size};
+	</select>
+	<select id="total_purchase" resultType="int">
+		select count(*)
+		from
+		purchase
+		where uid=#{uid}
+	</select>
+	<select id="list_orders" resultType="hashmap">
+		select *
+		from view_orders
+		where oid=#{oid};
+	</select>
+</mapper>

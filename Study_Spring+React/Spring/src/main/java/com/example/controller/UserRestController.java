@@ -36,4 +36,9 @@ public class UserRestController {
 		}
 		return result;
 	}
+	
+	@PostMapping("/update")
+	public void update(@RequestBody UserVO vo) {
+		dao.update(vo);
+	}
 }
