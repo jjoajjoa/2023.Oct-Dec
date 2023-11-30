@@ -66,7 +66,7 @@ const HomePage = () => {
                                 </Card.Body>
                                 <Card.Footer>
                                     <small>조아용 {shop.fcnt} </small>
-                                    <small>조회수 {shop.reviewcnt} </small>
+                                    <small>댓글수 {shop.reviewcnt} </small>
                                 </Card.Footer>
                             </Card>
                         </Link>

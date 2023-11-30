@@ -32,7 +32,7 @@ const OrderList = () => {
                         <td>주문번호</td>
                         <td>주문자</td>
                         <td>주문일</td>
-                        <td>배송지</td>
+                        <td>상태</td>
                         <td>전화번호</td>
                         <td>금액</td>
                         <td>주문확인</td>
@@ -44,7 +44,7 @@ const OrderList = () => {
                             <td>{p.oid}</td>
                             <td>{p.uname}</td>
                             <td>{p.regdate}</td>
-                            <td>{p.address1} {p.address2}</td>
+                            <td>{p.str_status}</td>
                             <td>{p.phone}</td>
                             <td className='text-end'>{p.fmtsum}원</td>
                             <td><ModalOrder p={p} /></td>
