@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+</head>
+
+<body>
+	<h1>교수목록</h1>
+	<a href="/pro/insert">교수등록</a>
+	<div id="div_pro"></div>
+</body>
+<script id="temp_pro" type="x-handlebars-template">
+	<table border=1 width=500>
+		{{#each list}}
+		<tr>
+			<td>{{pcode}}</td>
+			<td><a href="/pro/read/{{pcode}}">{{pname}}</a></td>
+			<td>{{dept}}</td>
+			<td><button pcode="{{pcode}}">삭제</button></td>
+		</tr>	
+		{{/each}}
+	</table>		
+</script>
+<script>
+	getList();
+	$("#div_pro").on("click", "button", function () {
+		const pcode = $(this).attr("pcode");
+		if (confirm(`${pcode}번 교수를 삭제하실래요?`)) {
+			$.ajax({
+				type: "post",
+				url: "/pro/delete/" + pcode,
+				success: function () {
+					alert("삭제성공");
+					getList();
+				}
+			})
+
+		}
+	});
+
+	function getList() {
+		$.ajax({
+			type: "get",
+			url: "/pro/list.json",
+			data: {page: 1, size: 100},
+			success: function (data) {
+				//console.log(data);
+				const temp = Handlebars.compile($("#temp_pro").html());
+				$("#div_pro").html(temp(data));
+			}
+		});
+	}
+</script>
+
+</html>

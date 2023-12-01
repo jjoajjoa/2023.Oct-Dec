@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.StuMapper">
+	<select id="list" resultType="hashmap">
+		select * from students;
+	</select>
+	<select id="list_enroll" resultType="hashmap">
+		select *
+		from enrollments e, courses c
+		where e.lcode=c.lcode and scode=#{scode};
+	</select>
+	<select id="check" resultType="int">
+		select count(*)
+		from enrollments
+		where scode=#{scode} and lcode=#{lcode}
+	</select>
+	<delete id="delete_enroll">
+		delete from enrollments
+		where lcode=#{lcode} and scode=#{scode}
+	</delete>
+	<insert id="insert_enroll">
+		insert into enrollments(scode, lcode, edate)
+		values(#{scode}, #{lcode}, now());
+	</insert>
+</mapper>

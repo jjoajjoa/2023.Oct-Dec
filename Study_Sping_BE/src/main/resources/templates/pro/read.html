@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+</head>
+
+<body>
+	<h1>교수정보수정</h1>
+	<div id="div_pro"></div>
+</body>
+
+<script id="temp_pro" type="x-handlebars-template">
+	<form name="frm" id="frm">
+		<input name="pcode" value="{{pcode}}" readonly><hr>
+		<input name="pname" value="{{pname}}"><hr>
+		<input name="dept" value="{{dept}}"><hr>
+		<button type="submit">수정</button>
+		<button type="reset">취소</button>
+	</form>
+</script>
+
+<script>
+	const pcode = "[[${pcode}]]";
+	$.ajax({
+		type: "get",
+		url: "/pro/read.json/" + pcode,
+		success: function (data) {
+			console.log(data);
+			const temp = Handlebars.compile($("#temp_pro").html());
+			$("#div_pro").html(temp(data));
+		}
+	});
+
+	$("#div_pro").on("submit", "#frm", function (e) {
+		e.preventDefault();
+		const data = {pcode: $(frm.pcode).val(), pname: $(frm.pname).val(), dept: $(frm.dept).val()}
+		if (confirm("수정하실래요?")) {
+			$.ajax({
+				type: "post",
+				url: "/pro/update",
+				data: JSON.stringify(data),
+				contentType: "application/JSON",
+				success: function () {
+					alert("수정성공");
+					location.href = "/pro/list";
+				}
+			});
+		}
+	});
+</script>
+
+</html>

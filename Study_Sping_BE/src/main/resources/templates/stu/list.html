@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+
+</head>
+
+<body>
+	<h1>학생목록</h1>
+	<a href="/pro/insert">학생등록</a>
+	<div id="div_stu"></div>
+</body>
+
+<script id="temp_stu" type="x-handlebars-template">
+   <table border=1 width=500>
+      {{#each .}}
+         <tr>
+            <td>{{scode}}</td>
+            <td><a href="/stu/read/{{scode}}">{{sname}}</a></td>
+            <td>{{dept}}</td>
+            <td><button scode="{{scode}}">수강신청</button></td>
+         </tr>
+      {{/each}}
+   </table>
+</script>
+
+<script id="temp_cou" type="x-handlebars-template">
+	<select>
+		{{#each .}}
+			<option value="{{lcode}}"> {{lcode}} {{lname}} {{persons}}/{{capacity}} </option>
+		{{/each}}
+	</select>
+</script>
+
+<script>
+	getList();
+	function getList() {
+		$.ajax({
+			type: "get",
+			url: "/stu/list.json",
+			success: function (data) {
+				// console.log(data);
+				const temp = Handlebars.compile($("#temp_stu").html());
+				$("#div_stu").html(temp(data));
+			}
+		});
+	}
+		
+	getCou();
+	function getCou() {
+		$.ajax({
+			type: "get",
+			url: "/cou/list.json/" + scode,
+			success: function (data) {
+				// console.log(data);
+				const temp = Handlebars.compile($("#temp_cou").html());
+				$("#div_cou").html(temp(data));
+			}
+		});
+	}
+</script>
+
+</html>
